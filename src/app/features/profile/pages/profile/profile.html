@@ -1,0 +1,92 @@
+<div class="profile-page">
+    <div class="page-header">
+        <div>
+            <h1>Mi perfil</h1>
+            <p>Consulta la información de tu cuenta y los roles asignados.</p>
+        </div>
+    </div>
+
+    @if (user(); as profile) {
+        <div class="profile-content">
+            <section class="profile-card profile-summary">
+                <p-avatar
+                    [label]="profile.first_name.charAt(0).toUpperCase()"
+                    shape="circle"
+                    size="xlarge"
+                />
+
+                <div class="profile-identity">
+                    <h2>{{ fullName() }}</h2>
+                    <span>{{ profile.username }}</span>
+                </div>
+            </section>
+
+            <section class="profile-card">
+                <h2>Información personal</h2>
+
+                <div class="profile-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Nombre</span>
+                        <span class="detail-value">{{ profile.first_name }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Apellido</span>
+                        <span class="detail-value">{{ profile.last_name }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Usuario</span>
+                        <span class="detail-value">{{ profile.username }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Correo electrónico</span>
+                        <span class="detail-value">{{ profile.email }}</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="profile-card">
+                <h2>Roles asignados</h2>
+
+                @if (profile.roles.length > 0) {
+                    <div class="roles-list">
+                        @for (role of profile.roles; track role) {
+                            <p-tag [value]="role" severity="secondary" />
+                        }
+                    </div>
+                } @else {
+                    <p class="empty-message">No tienes roles asignados.</p>
+                }
+            </section>
+
+            <section class="profile-card">
+                <div class="security-section">
+                    <div>
+                        <h2>Seguridad de la cuenta</h2>
+                        <p>Actualiza tu contraseña para mantener protegida tu cuenta.</p>
+                    </div>
+
+                    <p-button
+                        label="Cambiar contraseña"
+                        icon="pi pi-lock"
+                        severity="secondary"
+                        [outlined]="true"
+                        (onClick)="openPasswordDialog()"
+                    />
+                </div>
+            </section>
+        </div>
+    }
+
+    <app-form-dialog
+        [(visible)]="passwordDialogVisible"
+        title="Cambiar contraseña"
+        [loading]="saving()"
+        [saveDisabled]="saving()"
+        (save)="savePassword()"
+    >
+        <app-profile-password />
+    </app-form-dialog>
+</div>

@@ -1,0 +1,129 @@
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.user-roles {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.description {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--p-text-muted-color);
+
+    strong {
+        color: var(--p-text-color);
+        font-weight: 600;
+    }
+}
+
+.search-field {
+    position: relative;
+
+    i {
+        position: absolute;
+        top: 50%;
+        left: 0.875rem;
+        transform: translateY(-50%);
+        color: var(--p-text-muted-color);
+        pointer-events: none;
+    }
+
+    input {
+        width: 100%;
+        padding-left: 2.5rem;
+    }
+}
+
+.selection-count {
+    font-size: 0.75rem;
+    color: var(--p-text-muted-color);
+}
+
+.roles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.role-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 0.875rem;
+    border: 1px solid var(--p-content-border-color);
+    border-radius: 0.5rem;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--p-content-hover-background);
+    }
+}
+
+.role-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    min-width: 0;
+    cursor: pointer;
+}
+
+.role-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.role-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--p-text-color);
+}
+
+.role-code {
+    font-size: 0.75rem;
+    color: var(--p-text-muted-color);
+}
+
+.role-description {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--p-text-muted-color);
+}
+
+.inactive-label {
+    font-size: 0.75rem;
+    color: var(--p-text-muted-color);
+}
+
+.state-message,
+.empty-message {
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--p-text-muted-color);
+}
+
+.state-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.retry-button {
+    border: 0;
+    background: transparent;
+    color: var(--p-primary-color);
+    cursor: pointer;
+    font: inherit;
+}

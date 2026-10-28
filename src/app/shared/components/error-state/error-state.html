@@ -1,0 +1,19 @@
+<div class="error-state" role="alert">
+    <div class="error-state-icon">
+        <i [class]="icon()" aria-hidden="true"></i>
+    </div>
+
+    <h3 class="error-state-title">
+        {{ title() }}
+    </h3>
+
+    @if (description()) {
+        <p class="error-state-description">
+            {{ description() }}
+        </p>
+    }
+
+    <div class="error-state-actions">
+        <ng-content select="[errorActions]" />
+    </div>
+</div>

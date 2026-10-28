@@ -1,0 +1,55 @@
+<header class="navbar">
+    <div class="navbar-left">
+        <div class="desktop-toggle">
+            <p-button
+                icon="pi pi-bars"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [ariaLabel]="collapsed() ? 'Expandir menú' : 'Contraer menú'"
+                (onClick)="toggleSidebar.emit()"
+            />
+        </div>
+
+        <div class="mobile-toggle">
+            <p-button
+                icon="pi pi-bars"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                ariaLabel="Abrir menú"
+                (onClick)="toggleMobileSidebar.emit()"
+            />
+        </div>
+
+        <span class="navbar-title">{{ appName }}</span>
+    </div>
+
+    <div class="navbar-right">
+        <p-button
+            icon="pi pi-bell"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            ariaLabel="Notificaciones"
+            [disabled]="true"
+        />
+
+        <button
+            type="button"
+            class="user-trigger"
+            aria-label="Abrir menú de usuario"
+            aria-haspopup="menu"
+            (click)="userMenu.toggle($event)"
+        >
+            <p-avatar
+                [label]="(fullName() || currentUser()?.username || 'U').charAt(0).toUpperCase()"
+                shape="circle"
+            />
+            <span class="user-name">{{ fullName() }}</span>
+            <i class="pi pi-chevron-down"></i>
+        </button>
+
+        <p-menu #userMenu [model]="userMenuItems()" [popup]="true" appendTo="body" />
+    </div>
+</header>

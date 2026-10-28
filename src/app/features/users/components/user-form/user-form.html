@@ -1,0 +1,97 @@
+<form [formGroup]="form" class="user-form">
+    <div class="form-field">
+        <label for="username">Usuario *</label>
+
+        <input
+            pInputText
+            id="username"
+            formControlName="username"
+            placeholder="Ingrese el usuario"
+            fluid
+        />
+
+        @if (getFieldError('username'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <label for="email">Correo electrónico *</label>
+
+        <input
+            pInputText
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="usuario@ejemplo.com"
+            fluid
+        />
+
+        @if (getFieldError('email'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-row">
+        <div class="form-field">
+            <label for="first_name">Nombre *</label>
+
+            <input
+                pInputText
+                id="first_name"
+                formControlName="first_name"
+                placeholder="Nombre"
+                fluid
+            />
+
+            @if (getFieldError('first_name'); as error) {
+                <small class="field-error">{{ error }}</small>
+            }
+        </div>
+
+        <div class="form-field">
+            <label for="last_name">Apellido *</label>
+
+            <input
+                pInputText
+                id="last_name"
+                formControlName="last_name"
+                placeholder="Apellido"
+                fluid
+            />
+
+            @if (getFieldError('last_name'); as error) {
+                <small class="field-error">{{ error }}</small>
+            }
+        </div>
+    </div>
+
+    @if (!user()) {
+        <div class="form-field">
+            <label for="password">Contraseña *</label>
+
+            <p-password
+                inputId="password"
+                formControlName="password"
+                placeholder="Ingrese una contraseña"
+                [toggleMask]="true"
+                [feedback]="false"
+                [fluid]="true"
+            />
+
+            @if (getFieldError('password'); as error) {
+                <small class="field-error">{{ error }}</small>
+            }
+        </div>
+    }
+
+    <div class="form-field">
+        <div class="toggle-field">
+            <label for="is_active">Usuario activo</label>
+
+            <p-toggleswitch inputId="is_active" formControlName="is_active" />
+        </div>
+
+        <small class="field-hint"> Los usuarios inactivos no deben poder iniciar sesión. </small>
+    </div>
+</form>

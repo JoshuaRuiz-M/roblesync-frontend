@@ -1,0 +1,51 @@
+<p-dialog
+    [visible]="visible()"
+    (visibleChange)="onVisibleChange($event)"
+    [modal]="true"
+    [closable]="closable() && !loading()"
+    [dismissableMask]="dismissableMask() && !loading()"
+    [closeOnEscape]="closeOnEscape() && !loading()"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{
+        width: width(),
+        maxWidth: maxWidth(),
+    }"
+    styleClass="app-form-dialog"
+>
+    <ng-template #header>
+        <div class="form-dialog-header">
+            <div class="form-dialog-title">
+                <h2>{{ title() }}</h2>
+
+                @if (description()) {
+                    <p>{{ description() }}</p>
+                }
+            </div>
+        </div>
+    </ng-template>
+
+    <div class="form-dialog-content">
+        <ng-content />
+    </div>
+
+    <ng-template #footer>
+        <div class="form-dialog-footer">
+            <p-button
+                [label]="cancelLabel()"
+                severity="secondary"
+                [outlined]="true"
+                [disabled]="loading()"
+                (onClick)="onCancel()"
+            />
+
+            <p-button
+                [label]="saveLabel()"
+                [icon]="loading() ? undefined : saveIcon()"
+                [loading]="loading()"
+                [disabled]="saveDisabled() || loading()"
+                (onClick)="onSave()"
+            />
+        </div>
+    </ng-template>
+</p-dialog>

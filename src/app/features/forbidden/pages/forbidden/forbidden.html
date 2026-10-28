@@ -1,0 +1,25 @@
+<section class="forbidden">
+    <div class="forbidden-content">
+        <div class="forbidden-icon">
+            <i class="pi pi-lock"></i>
+        </div>
+
+        <h1>403</h1>
+        <h2>Acceso denegado</h2>
+
+        <p>
+            No tienes permisos para acceder a esta sección. Si consideras que necesitas acceso,
+            comunícate con el administrador del sistema.
+        </p>
+
+        <div class="forbidden-actions">
+            <p-button
+                label="Regresar"
+                icon="pi pi-arrow-left"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="goBack()"
+            />
+        </div>
+    </div>
+</section>

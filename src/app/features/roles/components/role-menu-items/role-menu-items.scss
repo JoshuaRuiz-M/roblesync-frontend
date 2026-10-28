@@ -1,0 +1,83 @@
+:host {
+    display: block;
+}
+
+.role-menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.description {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--p-text-muted-color);
+
+    strong {
+        color: var(--p-text-color);
+    }
+}
+
+.menu-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.menu-node {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--p-content-border-color);
+    border-radius: 0.5rem;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--p-content-hover-background);
+    }
+}
+
+.menu-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    cursor: pointer;
+
+    strong {
+        font-size: 0.875rem;
+    }
+
+    small {
+        color: var(--p-text-muted-color);
+        font-size: 0.75rem;
+    }
+}
+
+.menu-children {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-left: 1.5rem;
+    padding-left: 0.75rem;
+    border-left: 1px solid var(--p-content-border-color);
+}
+
+.selection-count,
+.state-message {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--p-text-muted-color);
+}
+
+.state-message {
+    text-align: center;
+}

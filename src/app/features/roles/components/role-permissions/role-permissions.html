@@ -1,0 +1,57 @@
+<div class="role-permissions">
+    @if (loading()) {
+        <p class="state-message">Cargando permisos...</p>
+    } @else if (error()) {
+        <div class="state-message">
+            <p>No fue posible cargar los permisos.</p>
+
+            <button type="button" (click)="loadPermissions()">Reintentar</button>
+        </div>
+    } @else {
+        <p class="description">
+            Seleccione los permisos que desea asignar al rol <strong>{{ role().name }}</strong
+            >.
+        </p>
+
+        <div class="search-field">
+            <i class="pi pi-search"></i>
+
+            <input
+                pInputText
+                type="text"
+                placeholder="Buscar por nombre o código..."
+                [ngModel]="searchTerm()"
+                (ngModelChange)="searchTerm.set($event)"
+            />
+        </div>
+
+        <div class="permissions-list">
+            @for (permission of filteredPermissions(); track permission.permission_id) {
+                <div class="permission-item">
+                    <p-checkbox
+                        [binary]="true"
+                        [ngModel]="isSelected(permission.permission_id)"
+                        (ngModelChange)="togglePermission(permission.permission_id, $event)"
+                        [disabled]="saving()"
+                        [inputId]="'permission-' + permission.permission_id"
+                    />
+
+                    <label class="permission-info" [for]="'permission-' + permission.permission_id">
+                        <strong>{{ permission.name }}</strong>
+                        <small>{{ permission.code }}</small>
+
+                        @if (permission.description) {
+                            <small>{{ permission.description }}</small>
+                        }
+                    </label>
+                </div>
+            } @empty {
+                <p class="state-message">No se encontraron permisos.</p>
+            }
+        </div>
+
+        <p class="selection-count">
+            {{ selectedIds().length }} permisos seleccionados de {{ permissions().length }}
+        </p>
+    }
+</div>

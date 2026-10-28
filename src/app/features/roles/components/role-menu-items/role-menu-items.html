@@ -1,0 +1,54 @@
+<div class="role-menu-items">
+    @if (loading()) {
+        <p class="state-message">Cargando opciones de menú...</p>
+    } @else if (error()) {
+        <div class="state-message">
+            <p>No fue posible cargar las opciones de menú.</p>
+
+            <button type="button" (click)="loadMenuItems()">Reintentar</button>
+        </div>
+    } @else {
+        <p class="description">
+            Seleccione las opciones de menú para el rol
+            <strong>{{ role().name }}</strong
+            >.
+        </p>
+
+        <div class="menu-tree">
+            <ng-container *ngTemplateOutlet="menuNodes; context: { $implicit: menuTree() }" />
+        </div>
+
+        <p class="selection-count">{{ selectedIds().length }} opciones seleccionadas</p>
+    }
+</div>
+
+<ng-template #menuNodes let-nodes>
+    @for (node of nodes; track node.item.menu_item_id) {
+        <div class="menu-node">
+            <div class="menu-item">
+                <p-checkbox
+                    [binary]="true"
+                    [ngModel]="isSelected(node.item.menu_item_id)"
+                    (ngModelChange)="toggleMenuItem(node.item.menu_item_id, $event)"
+                    [disabled]="saving()"
+                    [inputId]="'menu-item-' + node.item.menu_item_id"
+                />
+
+                <label class="menu-info" [for]="'menu-item-' + node.item.menu_item_id">
+                    <strong>{{ node.item.label }}</strong>
+                    <small>{{ node.item.code }}</small>
+                </label>
+            </div>
+
+            @if (node.children.length > 0) {
+                <div class="menu-children">
+                    <ng-container
+                        *ngTemplateOutlet="menuNodes; context: { $implicit: node.children }"
+                    />
+                </div>
+            }
+        </div>
+    } @empty {
+        <p class="state-message">No hay opciones de menú disponibles.</p>
+    }
+</ng-template>

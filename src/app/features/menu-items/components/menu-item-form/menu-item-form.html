@@ -1,0 +1,112 @@
+<form [formGroup]="form" class="menu-item-form" autocomplete="off">
+    <div class="form-field">
+        <label for="menu-code"> Código <span class="required">*</span> </label>
+
+        <input
+            pInputText
+            id="menu-code"
+            formControlName="code"
+            placeholder="Ej. USERS"
+            maxlength="100"
+            fluid
+        />
+
+        @if (getFieldError('code'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <label for="menu-label"> Nombre <span class="required">*</span> </label>
+
+        <input
+            pInputText
+            id="menu-label"
+            formControlName="label"
+            placeholder="Ej. Usuarios"
+            maxlength="150"
+            fluid
+        />
+
+        @if (getFieldError('label'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field full-width">
+        <label for="menu-parent">Opción padre</label>
+
+        <p-select
+            inputId="menu-parent"
+            formControlName="parent_id"
+            [options]="parentOptions()"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Sin opción padre"
+            [showClear]="true"
+            [filter]="true"
+            filterBy="label"
+            [fluid]="true"
+            appendTo="body"
+        />
+
+        <small class="field-hint"> Deje este campo vacío para crear una opción principal. </small>
+    </div>
+
+    <div class="form-field">
+        <label for="menu-path">Ruta</label>
+
+        <input
+            pInputText
+            id="menu-path"
+            formControlName="path"
+            placeholder="Ej. /users"
+            maxlength="255"
+            fluid
+        />
+    </div>
+
+    <div class="form-field">
+        <label for="menu-icon">Ícono</label>
+
+        <input
+            pInputText
+            id="menu-icon"
+            formControlName="icon"
+            placeholder="Ej. pi pi-users"
+            maxlength="100"
+            fluid
+        />
+
+        <small class="field-hint"> Utilice una clase de PrimeIcons. </small>
+    </div>
+
+    <div class="form-field">
+        <label for="menu-order"> Orden <span class="required">*</span> </label>
+
+        <p-inputnumber
+            inputId="menu-order"
+            formControlName="sort_order"
+            [min]="0"
+            [maxFractionDigits]="0"
+            [showButtons]="true"
+            [fluid]="true"
+        />
+
+        @if (getFieldError('sort_order'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field toggle-field">
+        <label for="menu-active">Estado</label>
+
+        <div class="toggle-control">
+            <p-toggleswitch inputId="menu-active" formControlName="is_active" />
+
+            <span>
+                {{ form.controls.is_active.value ? 'Activo' : 'Inactivo' }}
+            </span>
+        </div>
+    </div>
+</form>

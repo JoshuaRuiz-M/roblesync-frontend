@@ -1,0 +1,38 @@
+<div class="admin-layout" [class.sidebar-collapsed]="collapsed()">
+    <!-- Navegación de escritorio -->
+    <div class="desktop-sidebar">
+        <app-sidebar [collapsed]="collapsed()" [menuItems]="menuItems()" />
+    </div>
+
+    <!-- Navegación móvil -->
+    <p-drawer
+        [visible]="mobileOpen()"
+        (visibleChange)="mobileOpen.set($event)"
+        position="left"
+        [modal]="true"
+        [dismissible]="true"
+        [style]="{ width: 'min(280px, 85vw)' }"
+    >
+        <ng-template #headless>
+            <app-sidebar [collapsed]="false" (navigate)="closeMobileSidebar()" />
+        </ng-template>
+    </p-drawer>
+
+    <div class="admin-main">
+        <app-navbar
+            [collapsed]="collapsed()"
+            (toggleSidebar)="toggleSidebar()"
+            (toggleMobileSidebar)="toggleMobileSidebar()"
+        />
+        <main class="admin-content">
+            <router-outlet />
+        </main>
+    </div>
+</div>
+<p-confirmdialog
+    key="global-confirm"
+    [modal]="true"
+    [closable]="false"
+    [dismissableMask]="false"
+    [style]="{ width: '28rem', maxWidth: '95vw' }"
+/>

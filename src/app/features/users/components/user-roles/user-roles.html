@@ -1,0 +1,75 @@
+<div class="user-roles">
+    <p class="description">
+        Seleccione los roles que desea asignar al usuario
+        <strong>{{ user().username }}</strong
+        >.
+    </p>
+
+    @if (loading()) {
+        <div class="state-message">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Cargando roles...</span>
+        </div>
+    } @else if (error()) {
+        <div class="state-message">
+            <span>No fue posible cargar los roles.</span>
+
+            <button type="button" class="retry-button" (click)="loadRoles()">Reintentar</button>
+        </div>
+    } @else {
+        <div class="search-field">
+            <i class="pi pi-search"></i>
+
+            <input
+                pInputText
+                type="text"
+                placeholder="Buscar por nombre o código..."
+                [ngModel]="searchTerm()"
+                (ngModelChange)="searchTerm.set($event)"
+            />
+        </div>
+
+        <div class="selection-count">
+            {{ selectedIds().length }} roles seleccionados de
+            {{ roles().length }}
+        </div>
+
+        <div class="roles-list">
+            @for (role of filteredRoles(); track role.role_id) {
+                <div class="role-item">
+                    <p-checkbox
+                        [binary]="true"
+                        [ngModel]="isSelected(role.role_id)"
+                        (ngModelChange)="toggleRole(role.role_id, $event)"
+                        [disabled]="saving()"
+                        [inputId]="'role-' + role.role_id"
+                    />
+
+                    <label class="role-info" [for]="'role-' + role.role_id">
+                        <span class="role-heading">
+                            <span class="role-name">
+                                {{ role.name }}
+                            </span>
+
+                            <span class="role-code">
+                                {{ role.code }}
+                            </span>
+                        </span>
+
+                        @if (role.description) {
+                            <span class="role-description">
+                                {{ role.description }}
+                            </span>
+                        }
+
+                        @if (!role.is_active) {
+                            <span class="inactive-label">Inactivo</span>
+                        }
+                    </label>
+                </div>
+            } @empty {
+                <div class="empty-message">No se encontraron roles.</div>
+            }
+        </div>
+    }
+</div>

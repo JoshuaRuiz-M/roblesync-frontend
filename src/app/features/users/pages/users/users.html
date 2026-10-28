@@ -1,0 +1,62 @@
+<section class="users-page">
+    <header class="page-heading">
+        <div>
+            <h1>Usuarios</h1>
+            <p>Administre los usuarios, sus roles y contraseñas del sistema.</p>
+        </div>
+    </header>
+
+    <app-data-grid
+        [data]="users()"
+        [columns]="columns"
+        [pagination]="pagination()"
+        [config]="gridConfig()"
+        [actions]="actions()"
+        [loading]="loading()"
+        [error]="error()"
+        (queryChange)="onQueryChange($event)"
+        (refresh)="refresh()"
+        (create)="onCreate()"
+        (actionClick)="onAction($event)"
+    />
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving()"
+        saveLabel="Guardar"
+        (save)="saveUser()"
+    >
+        <app-user-form [user]="selectedUser()" />
+    </app-form-dialog>
+
+    <app-form-dialog
+        [(visible)]="rolesDialogVisible"
+        title="Asignar roles"
+        [loading]="userRoles()?.saving() ?? false"
+        [saveDisabled]="
+            (userRoles()?.loading() ?? true) ||
+            (userRoles()?.error() ?? true) ||
+            (userRoles()?.saving() ?? false)
+        "
+        (save)="saveUserRoles()"
+    >
+        @if (rolesDialogVisible() && rolesUser(); as user) {
+            <app-user-roles [user]="user" (saved)="onRolesSaved()" />
+        }
+    </app-form-dialog>
+
+    <app-form-dialog
+        [(visible)]="passwordDialogVisible"
+        title="Cambiar contraseña"
+        [loading]="userPassword()?.saving() ?? false"
+        [saveDisabled]="userPassword()?.saving() ?? false"
+        saveLabel="Actualizar"
+        (save)="saveUserPassword()"
+    >
+        @if (passwordDialogVisible() && passwordUser(); as user) {
+            <app-user-password [user]="user" (saved)="onPasswordSaved()" />
+        }
+    </app-form-dialog>
+</section>

@@ -1,0 +1,53 @@
+<form [formGroup]="form" class="role-form" autocomplete="off">
+    <div class="form-field">
+        <label for="role-code"> Código <span class="required">*</span> </label>
+
+        <input pInputText id="role-code" formControlName="code" placeholder="Ej. ADMIN" fluid />
+
+        @if (getFieldError('code'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <label for="role-name"> Nombre <span class="required">*</span> </label>
+
+        <input
+            pInputText
+            id="role-name"
+            formControlName="name"
+            placeholder="Ej. Administrador"
+            fluid
+        />
+
+        @if (getFieldError('name'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <label for="role-description"> Descripción </label>
+
+        <textarea
+            pTextarea
+            id="role-description"
+            formControlName="description"
+            placeholder="Descripción del rol"
+            rows="3"
+            [autoResize]="true"
+            fluid
+        ></textarea>
+    </div>
+
+    <div class="form-field">
+        <label for="role-active">Estado</label>
+
+        <div class="toggle-control">
+            <p-toggleswitch inputId="role-active" formControlName="is_active" />
+
+            <span>
+                {{ form.controls.is_active.value ? 'Activo' : 'Inactivo' }}
+            </span>
+        </div>
+    </div>
+</form>

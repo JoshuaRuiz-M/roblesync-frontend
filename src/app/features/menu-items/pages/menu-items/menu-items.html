@@ -1,0 +1,51 @@
+<section class="menu-items-page">
+    <header class="page-heading">
+        <div>
+            <h1>Opciones de menú</h1>
+            <p>Administre las opciones de navegación disponibles en el sistema.</p>
+        </div>
+    </header>
+
+    <app-data-grid
+        [data]="menuItems()"
+        [columns]="columns"
+        [pagination]="pagination()"
+        [config]="gridConfig()"
+        [actions]="actions()"
+        [loading]="loading()"
+        [error]="error()"
+        (queryChange)="onQueryChange($event)"
+        (refresh)="refresh()"
+        (create)="onCreate()"
+        (actionClick)="onAction($event)"
+    />
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving() || !parentsReady()"
+        saveLabel="Guardar"
+        (save)="saveMenuItem()"
+    >
+        @if (loadingParents()) {
+            <p class="text-muted">Cargando opciones padre...</p>
+        }
+
+        @if (parentsError()) {
+            <div class="parent-error">
+                <p>No fue posible cargar las opciones padre.</p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadParentItems()"
+                />
+            </div>
+        }
+
+        <app-menu-item-form [menuItem]="selectedMenuItem()" [parentItems]="parentItems()" />
+    </app-form-dialog>
+</section>

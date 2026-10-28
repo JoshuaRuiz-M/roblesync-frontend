@@ -1,0 +1,19 @@
+<div class="empty-state">
+    <div class="empty-state-icon">
+        <i [class]="icon()" aria-hidden="true"></i>
+    </div>
+
+    <h3 class="empty-state-title">
+        {{ title() }}
+    </h3>
+
+    @if (description()) {
+        <p class="empty-state-description">
+            {{ description() }}
+        </p>
+    }
+
+    <div class="empty-state-actions">
+        <ng-content select="[emptyActions]" />
+    </div>
+</div>

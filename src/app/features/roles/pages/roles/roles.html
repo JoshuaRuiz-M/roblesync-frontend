@@ -1,0 +1,65 @@
+<section class="roles-page">
+    <header class="page-heading">
+        <div>
+            <h1>Roles</h1>
+            <p>Administre los roles, permisos y opciones de menú del sistema.</p>
+        </div>
+    </header>
+
+    <app-data-grid
+        [data]="roles()"
+        [columns]="columns"
+        [pagination]="pagination()"
+        [config]="gridConfig()"
+        [actions]="actions()"
+        [loading]="loading()"
+        [error]="error()"
+        (queryChange)="onQueryChange($event)"
+        (refresh)="refresh()"
+        (create)="onCreate()"
+        (actionClick)="onAction($event)"
+    />
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving()"
+        saveLabel="Guardar"
+        (save)="saveRole()"
+    >
+        <app-role-form [role]="selectedRole()" />
+    </app-form-dialog>
+
+    <app-form-dialog
+        [(visible)]="permissionsDialogVisible"
+        title="Asignar permisos"
+        [loading]="rolePermissions()?.saving() ?? false"
+        [saveDisabled]="
+            (rolePermissions()?.loading() ?? true) ||
+            (rolePermissions()?.error() ?? true) ||
+            (rolePermissions()?.saving() ?? false)
+        "
+        (save)="saveRolePermissions()"
+    >
+        @if (permissionsRole(); as role) {
+            <app-role-permissions [role]="role" (saved)="onPermissionsSaved()" />
+        }
+    </app-form-dialog>
+
+    <app-form-dialog
+        [(visible)]="menuItemsDialogVisible"
+        title="Asignar opciones de menú"
+        [loading]="roleMenuItems()?.saving() ?? false"
+        [saveDisabled]="
+            (roleMenuItems()?.loading() ?? true) ||
+            (roleMenuItems()?.error() ?? true) ||
+            (roleMenuItems()?.saving() ?? false)
+        "
+        (save)="saveRoleMenuItems()"
+    >
+        @if (menuItemsRole(); as role) {
+            <app-role-menu-items [role]="role" (saved)="onMenuItemsSaved()" />
+        }
+    </app-form-dialog>
+</section>

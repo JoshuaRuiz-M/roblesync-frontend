@@ -1,0 +1,138 @@
+@import 'primeicons/primeicons.css';
+
+:root {
+    // Identidad visual del sidebar
+    --app-sidebar-bg: #ffffff;
+    --app-sidebar-text: #334155;
+    --app-sidebar-muted: #64748b;
+    --app-sidebar-hover: #f1f5f9;
+    --app-sidebar-active-bg: #e8eef8;
+    --app-sidebar-active-text: #1d4ed8;
+    --app-sidebar-border: #e2e8f0;
+
+    // Dimensiones
+    --app-sidebar-width: 260px;
+    --app-sidebar-collapsed-width: 72px;
+    --app-navbar-height: 64px;
+
+    // Contenido
+    --app-content-bg: #f8fafc;
+
+    // Transiciones
+    --app-transition-duration: 250ms;
+    --app-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: Inter, Arial, sans-serif;
+    color: #334155;
+    background: var(--app-content-bg);
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+.app-sidebar-popover {
+    --p-popover-background: var(--app-sidebar-bg);
+    --p-popover-color: var(--app-sidebar-text);
+    --p-popover-border-color: var(--app-sidebar-border);
+
+    min-width: 230px;
+    max-width: min(300px, calc(100vw - 2rem));
+
+    .floating-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .floating-menu-title {
+        padding: 0.5rem 0.75rem;
+        color: var(--app-sidebar-muted);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .floating-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        min-height: 42px;
+        padding: 0.65rem 0.75rem;
+        border-radius: 0.5rem;
+
+        color: var(--app-sidebar-text);
+        text-decoration: none;
+        font-size: 0.875rem;
+
+        transition:
+            background-color var(--app-transition-duration, 220ms) ease,
+            color var(--app-transition-duration, 220ms) ease;
+
+        &:hover {
+            background: var(--app-sidebar-hover);
+        }
+
+        &.active {
+            background: var(--app-sidebar-active-bg);
+            color: var(--app-sidebar-active-text);
+            font-weight: 600;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--app-sidebar-active-text);
+            outline-offset: -2px;
+        }
+
+        i {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+    }
+
+    .floating-menu-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .floating-menu-group-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        padding: 0.65rem 0.75rem;
+        color: var(--app-sidebar-muted);
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .floating-menu-children {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        padding-left: 0.75rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-sidebar-popover .floating-menu-item {
+        transition: none;
+    }
+}

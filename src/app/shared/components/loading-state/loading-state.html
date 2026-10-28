@@ -1,0 +1,23 @@
+<div class="loading-state" role="status" aria-live="polite">
+    <p-progress-spinner
+        [style]="{
+            width: size() + 'px',
+            height: size() + 'px',
+        }"
+        strokeWidth="4"
+        animationDuration="1s"
+        ariaLabel="Cargando"
+    />
+
+    @if (title()) {
+        <h3 class="loading-state-title">
+            {{ title() }}
+        </h3>
+    }
+
+    @if (description()) {
+        <p class="loading-state-description">
+            {{ description() }}
+        </p>
+    }
+</div>

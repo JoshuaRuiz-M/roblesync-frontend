@@ -1,0 +1,54 @@
+:host {
+    display: block;
+}
+
+.error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.error-state-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-bottom: 1.25rem;
+    border-radius: 50%;
+    background: var(--p-red-50);
+    color: var(--p-red-600);
+
+    i {
+        font-size: 2rem;
+    }
+}
+
+.error-state-title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--p-text-color);
+}
+
+.error-state-description {
+    max-width: 26rem;
+    margin: 0.75rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--p-text-muted-color);
+}
+
+.error-state-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+
+    &:empty {
+        display: none;
+    }
+}

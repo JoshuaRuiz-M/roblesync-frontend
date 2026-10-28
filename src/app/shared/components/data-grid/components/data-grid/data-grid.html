@@ -1,0 +1,171 @@
+<div class="data-grid">
+    <div class="data-grid-toolbar">
+        <div class="data-grid-search">
+            @if (settings().globalSearch) {
+                <div class="search-field">
+                    <i class="pi pi-search"></i>
+
+                    <input
+                        pInputText
+                        type="text"
+                        [ngModel]="searchValue()"
+                        (ngModelChange)="onSearch($event)"
+                        [placeholder]="settings().searchPlaceholder"
+                        aria-label="Buscar registros"
+                    />
+                </div>
+            }
+        </div>
+
+        <div class="data-grid-toolbar-actions">
+            @if (settings().showRefresh) {
+                <p-button
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    [disabled]="loading()"
+                    pTooltip="Actualizar"
+                    (onClick)="onRefresh()"
+                />
+            }
+
+            @if (settings().showCreate) {
+                <p-button label="Nuevo" icon="pi pi-plus" (onClick)="onCreate()" />
+            }
+        </div>
+    </div>
+
+    @if (error()) {
+        <app-error-state
+            title="Error al cargar registros"
+            description="No fue posible obtener la información."
+        >
+            <div errorActions>
+                <p-button label="Reintentar" icon="pi pi-refresh" (onClick)="onRefresh()" />
+            </div>
+        </app-error-state>
+    } @else {
+        <p-table
+            [value]="data()"
+            [loading]="loading()"
+            [paginator]="settings().paginator"
+            [lazy]="true"
+            [first]="first()"
+            [rows]="pagination().limit"
+            [totalRecords]="pagination().total"
+            [rowsPerPageOptions]="settings().rowsPerPageOptions"
+            [stripedRows]="settings().stripedRows"
+            [showGridlines]="settings().showGridlines"
+            [tableStyle]="{ 'min-width': '45rem' }"
+            (onPage)="onPageChange($event)"
+        >
+            <ng-template #header>
+                <tr>
+                    @for (column of visibleColumns(); track column.field) {
+                        <th
+                            [style.width]="column.width"
+                            [style.min-width]="column.minWidth"
+                            [style.text-align]="column.align ?? 'left'"
+                        >
+                            <div class="column-header">
+                                <span>{{ column.header }}</span>
+
+                                @if (settings().sortable && column.sortable) {
+                                    <button
+                                        type="button"
+                                        class="sort-button"
+                                        [attr.aria-label]="'Ordenar por ' + column.header"
+                                        (click)="onSort(column.field)"
+                                    >
+                                        <i
+                                            class="pi"
+                                            [class.pi-sort-alt]="sortField() !== column.field"
+                                            [class.pi-sort-amount-up-alt]="
+                                                sortField() === column.field && sortOrder() === 1
+                                            "
+                                            [class.pi-sort-amount-down]="
+                                                sortField() === column.field && sortOrder() === -1
+                                            "
+                                        ></i>
+                                    </button>
+                                }
+                            </div>
+                        </th>
+                    }
+
+                    @if (hasActions()) {
+                        <th class="actions-header">Acciones</th>
+                    }
+                </tr>
+            </ng-template>
+
+            <ng-template #body let-row>
+                <tr>
+                    @for (column of visibleColumns(); track column.field) {
+                        <td [style.text-align]="column.align ?? 'left'">
+                            @let value = getValue(row, column);
+
+                            @switch (column.type) {
+                                @case ('boolean') {
+                                    <p-tag
+                                        [value]="value ? 'Sí' : 'No'"
+                                        [severity]="value ? 'success' : 'secondary'"
+                                    />
+                                }
+
+                                @case ('date') {
+                                    {{ asDateValue(value) | date: 'dd/MM/yyyy' }}
+                                }
+
+                                @case ('datetime') {
+                                    {{ asDateValue(value) | date: 'dd/MM/yyyy HH:mm' }}
+                                }
+
+                                @case ('number') {
+                                    {{ asNumberValue(value) | number }}
+                                }
+
+                                @default {
+                                    {{ value ?? '—' }}
+                                }
+                            }
+                        </td>
+                    }
+
+                    @if (hasActions()) {
+                        <td class="actions-cell">
+                            <div class="row-actions">
+                                @for (action of actions(); track action.id) {
+                                    @if (isActionVisible(action, row)) {
+                                        <p-button
+                                            [icon]="action.icon ?? 'pi pi-cog'"
+                                            [severity]="action.severity ?? 'secondary'"
+                                            [text]="true"
+                                            [rounded]="true"
+                                            [disabled]="action.disabled?.(row) ?? false"
+                                            [attr.aria-label]="action.label"
+                                            (onClick)="onAction(action, row)"
+                                        />
+                                    }
+                                }
+                            </div>
+                        </td>
+                    }
+                </tr>
+            </ng-template>
+
+            <ng-template #emptymessage>
+                <tr>
+                    <td [attr.colspan]="columnCount()">
+                        @if (!loading()) {
+                            <app-empty-state
+                                [title]="settings().emptyMessage"
+                                description="No se encontraron registros para mostrar."
+                            />
+                        }
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    }
+</div>

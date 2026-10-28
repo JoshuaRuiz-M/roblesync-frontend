@@ -1,0 +1,87 @@
+:host {
+    display: block;
+}
+
+.role-permissions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.description {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--p-text-muted-color);
+
+    strong {
+        color: var(--p-text-color);
+    }
+}
+
+.permissions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.permission-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem;
+    border: 1px solid var(--p-content-border-color);
+    border-radius: 0.5rem;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--p-content-hover-background);
+    }
+}
+
+.permission-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    cursor: pointer;
+
+    strong {
+        font-size: 0.875rem;
+    }
+
+    small {
+        color: var(--p-text-muted-color);
+        font-size: 0.75rem;
+    }
+}
+
+.state-message {
+    text-align: center;
+    color: var(--p-text-muted-color);
+    font-size: 0.875rem;
+}
+
+.search-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    i {
+        position: absolute;
+        left: 0.875rem;
+        color: var(--p-text-muted-color);
+        pointer-events: none;
+    }
+
+    input {
+        width: 100%;
+        padding-left: 2.5rem;
+    }
+}
+
+.selection-count {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--p-text-muted-color);
+}

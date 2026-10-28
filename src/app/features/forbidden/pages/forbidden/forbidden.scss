@@ -1,0 +1,52 @@
+.forbidden {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding: 2rem;
+}
+
+.forbidden-content {
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+}
+
+.forbidden-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    background: var(--p-surface-100);
+    color: var(--p-primary-color);
+
+    i {
+        font-size: 2rem;
+    }
+}
+
+h1 {
+    margin: 0;
+    font-size: 5rem;
+    font-weight: 700;
+    color: var(--p-primary-color);
+}
+
+h2 {
+    margin: 0.5rem 0 1rem;
+    font-size: 1.5rem;
+}
+
+p {
+    margin: 0 0 2rem;
+    color: var(--p-text-muted-color);
+    line-height: 1.6;
+}
+
+.forbidden-actions {
+    display: flex;
+    justify-content: center;
+}

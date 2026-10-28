@@ -1,0 +1,55 @@
+:host {
+    display: block;
+    min-height: 100dvh;
+}
+
+.admin-layout {
+    display: flex;
+    min-height: 100dvh;
+    background: var(--app-content-bg);
+}
+
+.desktop-sidebar {
+    flex: 0 0 var(--app-sidebar-width);
+    width: var(--app-sidebar-width);
+    min-width: 0;
+
+    transition:
+        flex-basis var(--app-transition-duration, 250ms) var(--app-transition-easing, ease-in-out),
+        width var(--app-transition-duration, 250ms) var(--app-transition-easing, ease-in-out);
+}
+
+.sidebar-collapsed .desktop-sidebar {
+    flex-basis: var(--app-sidebar-collapsed-width);
+    width: var(--app-sidebar-collapsed-width);
+}
+
+.admin-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-content {
+    flex: 1;
+    min-width: 0;
+    padding: 1.5rem;
+    background: var(--app-content-bg);
+}
+
+@media (max-width: 768px) {
+    .desktop-sidebar {
+        display: none;
+    }
+
+    .admin-content {
+        padding: 1rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .desktop-sidebar {
+        transition: none;
+    }
+}

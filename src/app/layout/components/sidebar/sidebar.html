@@ -1,0 +1,130 @@
+<aside class="sidebar" [class.collapsed]="collapsed()">
+    <div class="sidebar-brand">
+        <i class="pi pi-box brand-icon"></i>
+        <span class="brand-label">{{ appName }}</span>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Navegación principal">
+        <ng-container
+            *ngTemplateOutlet="menuTemplate; context: { items: navigationItems(), level: 0 }"
+        />
+    </nav>
+</aside>
+
+<ng-template #menuTemplate let-items="items" let-level="level">
+    @for (item of items; track item.id) {
+        <div class="menu-entry">
+            @if (item.items?.length) {
+                <button
+                    type="button"
+                    class="nav-item"
+                    [class.parent-active]="activeParentIds().has(item.id)"
+                    [class.expanded]="isExpanded(item.id)"
+                    [style.--menu-level]="level"
+                    [attr.aria-expanded]="isExpanded(item.id)"
+                    [attr.aria-label]="item.label"
+                    [pTooltip]="collapsed() ? item.label : ''"
+                    tooltipPosition="right"
+                    (click)="collapsed() ? openFloatingMenu($event, item) : toggleItem(item.id)"
+                >
+                    <i
+                        [class]="item.icon || 'pi pi-circle'"
+                        class="nav-icon"
+                        aria-hidden="true"
+                    ></i>
+
+                    <span class="nav-label">{{ item.label }}</span>
+
+                    <i
+                        class="pi pi-chevron-down nav-chevron"
+                        [class.rotated]="isExpanded(item.id)"
+                    ></i>
+                </button>
+
+                <div class="submenu" [class.open]="isExpanded(item.id) && !collapsed()">
+                    <div class="submenu-inner">
+                        <ng-container
+                            *ngTemplateOutlet="
+                                menuTemplate;
+                                context: {
+                                    items: item.items,
+                                    level: level + 1,
+                                }
+                            "
+                        />
+                    </div>
+                </div>
+            } @else if (item.routerLink) {
+                <a
+                    class="nav-item"
+                    [routerLink]="item.routerLink"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    [style.--menu-level]="level"
+                    [attr.aria-label]="item.label"
+                    [pTooltip]="collapsed() ? item.label : ''"
+                    tooltipPosition="right"
+                    (click)="onNavigate()"
+                >
+                    <i
+                        [class]="item.icon || 'pi pi-circle'"
+                        class="nav-icon"
+                        aria-hidden="true"
+                    ></i>
+
+                    <span class="nav-label">{{ item.label }}</span>
+                </a>
+            }
+        </div>
+    }
+</ng-template>
+
+<p-popover #submenuPopover styleClass="app-sidebar-popover">
+    <div class="floating-menu">
+        <div class="floating-menu-title">
+            {{ floatingTitle() }}
+        </div>
+
+        <ng-container
+            *ngTemplateOutlet="floatingMenuTemplate; context: { items: floatingItems(), level: 0 }"
+        />
+    </div>
+</p-popover>
+
+<ng-template #floatingMenuTemplate let-items="items" let-level="level">
+    @for (item of items; track item.id) {
+        @if (item.items?.length) {
+            <div class="floating-menu-group">
+                <div class="floating-menu-group-label">
+                    <i [class]="item.icon || 'pi pi-circle'" aria-hidden="true"></i>
+
+                    <span>{{ item.label }}</span>
+                </div>
+
+                <div class="floating-menu-children">
+                    <ng-container
+                        *ngTemplateOutlet="
+                            floatingMenuTemplate;
+                            context: {
+                                items: item.items,
+                                level: level + 1,
+                            }
+                        "
+                    />
+                </div>
+            </div>
+        } @else if (item.routerLink) {
+            <a
+                class="floating-menu-item"
+                [routerLink]="item.routerLink"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="onNavigate()"
+            >
+                <i [class]="item.icon || 'pi pi-circle'" aria-hidden="true"></i>
+
+                <span>{{ item.label }}</span>
+            </a>
+        }
+    }
+</ng-template>
