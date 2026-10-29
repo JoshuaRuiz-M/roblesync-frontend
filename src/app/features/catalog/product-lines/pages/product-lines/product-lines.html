@@ -1,0 +1,54 @@
+<section class="brands-page">
+    <header class="page-heading">
+        <div>
+            <h1>Líneas de producto</h1>
+            <p>Administre las líneas de producto del sistema.</p>
+        </div>
+    </header>
+
+    <app-data-grid
+        [data]="productLines()"
+        [columns]="columns"
+        [pagination]="pagination()"
+        [config]="gridConfig()"
+        [actions]="actions()"
+        [loading]="loading()"
+        [error]="error()"
+        (queryChange)="onQueryChange($event)"
+        (refresh)="refresh()"
+        (create)="onCreate()"
+        (actionClick)="onAction($event)"
+    />
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving()"
+        saveLabel="Guardar"
+        (save)="saveProductLine()"
+    >
+        @if (loadingCategories()) {
+            <p class="text-muted">Cargando categorías...</p>
+        }
+
+        @if (categoriesError()) {
+            <div class="parent-error">
+                <p>No fue posible cargar las categorías.</p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadingCategories()"
+                />
+            </div>
+        }
+
+        <app-product-lines-form
+            [productLine]="selectedProductLine()"
+            [categoryItems]="categoryItems()"
+        />
+    </app-form-dialog>
+</section>

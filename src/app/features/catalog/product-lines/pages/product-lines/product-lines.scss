@@ -1,0 +1,38 @@
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.product-lines-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 0;
+}
+
+.page-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+
+    h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--p-text-color);
+    }
+
+    p {
+        margin: 0.5rem 0 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--p-text-muted-color);
+    }
+}
+
+@media (max-width: 640px) {
+    .page-heading h1 {
+        font-size: 1.25rem;
+    }
+}
