@@ -69,6 +69,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'warehouses',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/inventory/warehouse/warehouses.routes').then(
+                        (m) => m.WAREHOUSES_ROUTES,
+                    ),
+            },
+            {
                 path: 'suppliers',
                 canActivate: [menuGuard],
                 loadChildren: () =>
