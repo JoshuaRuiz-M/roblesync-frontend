@@ -1,0 +1,52 @@
+export interface Product {
+    product_id: number;
+    brand_id: number;
+    product_line_id: number;
+    unit_of_measure_id: number;
+    sku: string;
+    barcode: string;
+    name: string;
+    description?: string | null;
+    weight?: number | null;
+    average_cost: number;
+    list_price: number;
+    minimum_stock: number;
+    maximum_stock: number;
+    reorder_point: number;
+    tracks_expiration: boolean;
+    is_active: boolean;
+    created_at: Date;
+    created_by: number;
+    updated_at?: Date | null;
+    updated_by?: number | null;
+}
+
+export interface CreateProduct {
+    sku: string;
+    barcode: string;
+    name: string;
+    description?: string | null;
+    weight?: number | null;
+    average_cost: number;
+    list_price: number;
+    minimum_stock: number;
+    maximum_stock: number;
+    reorder_point: number;
+    tracks_expiration: boolean;
+    is_active?: boolean;
+}
+
+export interface UpdateProduct {
+    sku?: string;
+    barcode?: string;
+    name?: string;
+    description?: string | null;
+    weight?: number | null;
+    average_cost?: number;
+    list_price?: number;
+    minimum_stock?: number;
+    maximum_stock?: number;
+    reorder_point?: number;
+    tracks_expiration?: boolean;
+    is_active?: boolean;
+}
