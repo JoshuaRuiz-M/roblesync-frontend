@@ -61,6 +61,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'units-of-measure',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/catalog/units-of-mesure/units-of-mesure.routes').then(
+                        (m) => m.UNITS_OF_MEASURE_ROUTES,
+                    ),
+            },
+            {
                 path: 'suppliers',
                 canActivate: [menuGuard],
                 loadChildren: () =>

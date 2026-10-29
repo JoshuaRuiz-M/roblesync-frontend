@@ -1,0 +1,33 @@
+<section class="units-of-mesure-page">
+    <header class="page-heading">
+        <div>
+            <h1>Unidades de Medida</h1>
+            <p>Administre las unidades de medida del sistema.</p>
+        </div>
+    </header>
+
+    <app-data-grid
+        [data]="unitsOfMeasure()"
+        [columns]="columns"
+        [pagination]="pagination()"
+        [config]="gridConfig()"
+        [actions]="actions()"
+        [loading]="loading()"
+        [error]="error()"
+        (queryChange)="onQueryChange($event)"
+        (refresh)="refresh()"
+        (create)="onCreate()"
+        (actionClick)="onAction($event)"
+    />
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving()"
+        saveLabel="Guardar"
+        (save)="saveUnitOfMeasure()"
+    >
+        <app-unit-of-mesure-form [unitOfMeasure]="selectedUnitOfMeasure()" />
+    </app-form-dialog>
+</section>

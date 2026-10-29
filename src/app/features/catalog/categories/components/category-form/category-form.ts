@@ -9,10 +9,17 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import type { Category, CreateCategory, UpdateCategory } from '../../models/category.model';
 import { applyServerValidationErrors } from '../../../../../core/http/utils/form-validation.util';
 import { getFormFieldError } from '../../../../../shared/utils/form-validation.util';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
     selector: 'app-category-form',
-    imports: [ReactiveFormsModule, InputTextModule, PasswordModule, ToggleSwitchModule],
+    imports: [
+        ReactiveFormsModule,
+        InputTextModule,
+        PasswordModule,
+        ToggleSwitchModule,
+        TextareaModule,
+    ],
     templateUrl: './category-form.html',
     styleUrl: './category-form.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

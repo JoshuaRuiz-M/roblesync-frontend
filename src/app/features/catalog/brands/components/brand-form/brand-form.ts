@@ -9,10 +9,17 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import type { Brand, CreateBrand, UpdateBrand } from '../../models/brand.model';
 import { applyServerValidationErrors } from '../../../../../core/http/utils/form-validation.util';
 import { getFormFieldError } from '../../../../../shared/utils/form-validation.util';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
     selector: 'app-brand-form',
-    imports: [ReactiveFormsModule, InputTextModule, PasswordModule, ToggleSwitchModule],
+    imports: [
+        ReactiveFormsModule,
+        InputTextModule,
+        PasswordModule,
+        ToggleSwitchModule,
+        TextareaModule,
+    ],
     templateUrl: './brand-form.html',
     styleUrl: './brand-form.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

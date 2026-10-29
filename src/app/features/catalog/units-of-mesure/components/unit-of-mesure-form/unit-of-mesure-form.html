@@ -1,0 +1,70 @@
+<form [formGroup]="form" class="unit-of-mesure-form">
+    <div class="form-field">
+        <label for="code">Código *</label>
+
+        <input
+            pInputText
+            id="code"
+            formControlName="code"
+            placeholder="Ingrese el código de la unidad de medida"
+            fluid
+        />
+
+        @if (getFieldError('code'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+    <div class="form-field">
+        <label for="name">Nombre *</label>
+
+        <input
+            pInputText
+            id="name"
+            formControlName="name"
+            placeholder="Ingrese el nombre de la unidad de medida"
+            fluid
+        />
+
+        @if (getFieldError('name'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+    <div class="form-field">
+        <label for="abbreviation">Abreviatura *</label>
+
+        <input
+            pInputText
+            id="abbreviation"
+            formControlName="abbreviation"
+            placeholder="Ingrese la abreviatura de la unidad de medida"
+            fluid
+        />
+        <small class="field-hint">Ej: kg, g, ml, l</small>
+        @if (getFieldError('abbreviation'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+    <div class="form-field">
+        <label for="description">Descripción</label>
+
+        <textarea
+            rows="5"
+            pTextarea
+            id="description"
+            formControlName="description"
+            placeholder="Ingrese la descripción de la unidad de medida"
+        ></textarea>
+
+        @if (getFieldError('description'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <div class="toggle-field">
+            <label for="is_active">Marca activa</label>
+
+            <p-toggleswitch inputId="is_active" formControlName="is_active" />
+        </div>
+    </div>
+</form>
