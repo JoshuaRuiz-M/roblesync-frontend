@@ -1,0 +1,134 @@
+<form [formGroup]="form" class="supplier-form">
+    <div class="form-field">
+        <label for="tax_id">NIT *</label>
+
+        <input
+            pInputText
+            id="tax_id"
+            formControlName="tax_id"
+            placeholder="Ingrese el NIT del proveedor"
+            fluid
+        />
+
+        @if (getFieldError('tax_id'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+    <div class="form-field">
+        <label for="business_name">Razón Social *</label>
+
+        <input
+            pInputText
+            id="business_name"
+            formControlName="business_name"
+            placeholder="Ingrese la razón social del proveedor"
+            fluid
+        />
+
+        @if (getFieldError('business_name'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <label for="contact_name">Nombre de Contacto</label>
+
+        <input
+            pInputText
+            id="contact_name"
+            formControlName="contact_name"
+            placeholder="Ingrese el nombre de contacto del proveedor"
+            fluid
+        />
+
+        @if (getFieldError('contact_name'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <label for="phone">Teléfono</label>
+
+        <input
+            pInputText
+            id="phone"
+            formControlName="phone"
+            placeholder="Ingrese el teléfono del proveedor"
+            fluid
+        />
+
+        @if (getFieldError('phone'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <label for="email">Correo Electrónico</label>
+
+        <input
+            pInputText
+            id="email"
+            formControlName="email"
+            placeholder="Ingrese el correo electrónico del proveedor"
+            fluid
+        />
+
+        @if (getFieldError('email'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <label for="address">Dirección</label>
+
+        <textarea
+            rows="5"
+            pTextarea
+            id="address"
+            formControlName="address"
+            placeholder="Ingrese la dirección del proveedor"
+        ></textarea>
+
+        @if (getFieldError('address'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <label for="credit_days">Días de Crédito</label>
+
+        <p-inputnumber
+            id="credit_days"
+            formControlName="credit_days"
+            placeholder="Ingrese los días de crédito del proveedor"
+            fluid
+        />
+
+        @if (getFieldError('credit_days'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <label for="credit_limit">Límite de Crédito</label>
+
+        <p-inputnumber
+            id="credit_limit"
+            formControlName="credit_limit"
+            placeholder="Ingrese el límite de crédito del proveedor"
+            fluid
+        />
+
+        @if (getFieldError('credit_limit'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <div class="toggle-field">
+            <label for="is_active">Proveedor activo</label>
+
+            <p-toggleswitch inputId="is_active" formControlName="is_active" />
+        </div>
+    </div>
+</form>

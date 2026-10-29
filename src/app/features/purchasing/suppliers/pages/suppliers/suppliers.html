@@ -1,0 +1,33 @@
+<section class="suppliers-page">
+    <header class="page-heading">
+        <div>
+            <h1>Proveedores</h1>
+            <p>Administre los proveedores del sistema.</p>
+        </div>
+    </header>
+
+    <app-data-grid
+        [data]="suppliers()"
+        [columns]="columns"
+        [pagination]="pagination()"
+        [config]="gridConfig()"
+        [actions]="actions()"
+        [loading]="loading()"
+        [error]="error()"
+        (queryChange)="onQueryChange($event)"
+        (refresh)="refresh()"
+        (create)="onCreate()"
+        (actionClick)="onAction($event)"
+    />
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving()"
+        saveLabel="Guardar"
+        (save)="saveSupplier()"
+    >
+        <app-supplier-form [supplier]="selectedSupplier()" />
+    </app-form-dialog>
+</section>

@@ -61,6 +61,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'suppliers',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/purchasing/suppliers/suppliers.routes').then(
+                        (m) => m.SUPPLIERS_ROUTES,
+                    ),
+            },
+            {
                 path: 'product-lines',
                 canActivate: [menuGuard],
                 loadChildren: () =>
