@@ -53,6 +53,14 @@ export const ADMIN_ROUTES: Routes = [
                     import('../features/brands/brands.routes').then((m) => m.BRANDS_ROUTES),
             },
             {
+                path: 'categories',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/categories/categories.routes').then(
+                        (m) => m.CATEGORIES_ROUTES,
+                    ),
+            },
+            {
                 path: 'forbidden',
                 title: 'Acceso denegado',
                 loadComponent: () =>

@@ -1,0 +1,34 @@
+<section class="categories-page">
+    <header class="page-heading">
+        <div>
+            <h1>Categorías</h1>
+            <p>Administre las categorías del sistema.</p>
+        </div>
+    </header>
+
+    <app-data-grid
+        [data]="categories()"
+        [columns]="columns"
+        [pagination]="pagination()"
+        [config]="gridConfig()"
+        [actions]="actions()"
+        [loading]="loading()"
+        [error]="error()"
+        (queryChange)="onQueryChange($event)"
+        (refresh)="refresh()"
+        (create)="onCreate()"
+        (actionClick)="onAction($event)"
+    />
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving()"
+        saveLabel="Guardar"
+        (save)="saveCategory()"
+    >
+        <app-category-form [category]="selectedCategory()" />
+    </app-form-dialog>
+
+</section>

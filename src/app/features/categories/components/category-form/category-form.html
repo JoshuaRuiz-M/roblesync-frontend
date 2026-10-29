@@ -1,0 +1,55 @@
+<form [formGroup]="form" class="category-form">
+    <div class="form-field">
+        <label for="code">Código *</label>
+
+        <input
+            pInputText
+            id="code"
+            formControlName="code"
+            placeholder="Ingrese el código de la categoría"
+            fluid
+        />
+
+        @if (getFieldError('code'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+  <div class="form-field">
+        <label for="name">Nombre *</label>
+
+        <input
+            pInputText
+            id="name"
+            formControlName="name"
+            placeholder="Ingrese el nombre de la categoría"
+            fluid
+        />
+
+        @if (getFieldError('name'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+      <div class="form-field">
+        <label for="description">Descripción</label>
+
+        <textarea   
+            rows="5"
+            pTextarea
+            id="description"
+            formControlName="description"
+            placeholder="Ingrese la descripción de la categoría"
+        ></textarea>
+
+        @if (getFieldError('description'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+
+    <div class="form-field">
+        <div class="toggle-field">
+            <label for="is_active">Categoría activa</label>
+
+            <p-toggleswitch inputId="is_active" formControlName="is_active" />
+        </div>
+    </div>
+</form>
