@@ -11,32 +11,32 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 
-import type { DataGridColumn } from '../../../../shared/components/data-grid/models/data-grid-column.model';
-import type { DataGridConfig } from '../../../../shared/components/data-grid/models/data-grid-config.model';
+import type { DataGridColumn } from '../../../../../shared/components/data-grid/models/data-grid-column.model';
+import type { DataGridConfig } from '../../../../../shared/components/data-grid/models/data-grid-config.model';
 import type {
     DataGridAction,
     DataGridActionEvent,
-} from '../../../../shared/components/data-grid/models/data-grid-action.model';
-import type { DataGridQuery } from '../../../../shared/components/data-grid/models/data-grid-query.model';
+} from '../../../../../shared/components/data-grid/models/data-grid-action.model';
+import type { DataGridQuery } from '../../../../../shared/components/data-grid/models/data-grid-query.model';
 
 import type {
     PaginationMeta,
     PaginationParams,
-} from '../../../../core/http/models/pagination.model';
+} from '../../../../../core/http/models/pagination.model';
 
-import { PAGINATION_DEFAULTS } from '../../../../core/http/models/pagination.model';
+import { PAGINATION_DEFAULTS } from '../../../../../core/http/models/pagination.model';
 
-import { ToastService } from '../../../../core/services/toast.service';
-import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
+import { ToastService } from '../../../../../core/services/toast.service';
+import { ConfirmDialogService } from '../../../../../core/services/confirm-dialog.service';
 
 import { BrandsService } from '../../services/brands.service';
 import type { CreateBrand, Brand } from '../../models/brand.model';
 
-import { DataGrid } from '../../../../shared/components/data-grid/components/data-grid/data-grid';
+import { DataGrid } from '../../../../../shared/components/data-grid/components/data-grid/data-grid';
 import { BrandForm } from '../../components/brand-form/brand-form';
-import { FormDialog } from '../../../../shared/components/form-dialog/form-dialog';
+import { FormDialog } from '../../../../../shared/components/form-dialog/form-dialog';
 
-import { AuthService } from '../../../../core/auth/services/auth.service';
+import { AuthService } from '../../../../../core/auth/services/auth.service';
 
 @Component({
     selector: 'app-brands',

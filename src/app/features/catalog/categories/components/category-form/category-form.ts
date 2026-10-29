@@ -7,8 +7,8 @@ import { PasswordModule } from 'primeng/password';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 import type { Category, CreateCategory, UpdateCategory } from '../../models/category.model';
-import { applyServerValidationErrors } from '../../../../core/http/utils/form-validation.util';
-import { getFormFieldError } from '../../../../shared/utils/form-validation.util';
+import { applyServerValidationErrors } from '../../../../../core/http/utils/form-validation.util';
+import { getFormFieldError } from '../../../../../shared/utils/form-validation.util';
 
 @Component({
     selector: 'app-category-form',

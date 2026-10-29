@@ -50,13 +50,13 @@ export const ADMIN_ROUTES: Routes = [
                 path: 'brands',
                 canActivate: [menuGuard],
                 loadChildren: () =>
-                    import('../features/brands/brands.routes').then((m) => m.BRANDS_ROUTES),
+                    import('../features/catalog/brands/brands.routes').then((m) => m.BRANDS_ROUTES),
             },
             {
                 path: 'categories',
                 canActivate: [menuGuard],
                 loadChildren: () =>
-                    import('../features/categories/categories.routes').then(
+                    import('../features/catalog/categories/categories.routes').then(
                         (m) => m.CATEGORIES_ROUTES,
                     ),
             },

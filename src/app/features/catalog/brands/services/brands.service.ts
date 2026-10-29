@@ -2,12 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../../environments/environment';
 
-import { ApiResponse, PaginatedResponse } from '../../../core/http/models/api-response.model';
+import { ApiResponse, PaginatedResponse } from '../../../../core/http/models/api-response.model';
 
 import { Brand, CreateBrand, UpdateBrand } from '../models/brand.model';
-import { PaginationParams } from '../../../core/http/models/pagination.model';
+import { PaginationParams } from '../../../../core/http/models/pagination.model';
 
 @Injectable({
     providedIn: 'root',
