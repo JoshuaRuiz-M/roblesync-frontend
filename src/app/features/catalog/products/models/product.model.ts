@@ -22,6 +22,9 @@ export interface Product {
 }
 
 export interface CreateProduct {
+    brand_id: number;
+    product_line_id: number;
+    unit_of_measure_id: number;
     sku: string;
     barcode: string;
     name: string;
@@ -37,6 +40,9 @@ export interface CreateProduct {
 }
 
 export interface UpdateProduct {
+    brand_id?: number;
+    product_line_id?: number;
+    unit_of_measure_id?: number;
     sku?: string;
     barcode?: string;
     name?: string;

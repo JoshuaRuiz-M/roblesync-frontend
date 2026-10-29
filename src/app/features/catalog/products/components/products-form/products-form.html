@@ -1,0 +1,306 @@
+<form [formGroup]="form" class="products-form" autocomplete="off">
+    <!-- INFORMACIÓN GENERAL -->
+    <section class="form-section">
+        <div class="section-heading">
+            <i class="pi pi-box"></i>
+            <div>
+                <h3>Información general</h3>
+                <p>Identificación y clasificación del producto.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-field">
+                <label for="sku"> SKU <span class="required">*</span> </label>
+
+                <input pInputText id="sku" formControlName="sku" placeholder="Ej. PROD-001" fluid />
+
+                @if (getFieldError('sku'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="barcode"> Código de barras <span class="required">*</span> </label>
+
+                <input
+                    pInputText
+                    id="barcode"
+                    formControlName="barcode"
+                    placeholder="Ingrese el código de barras"
+                    fluid
+                />
+
+                @if (getFieldError('barcode'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field full-width">
+                <label for="name"> Nombre <span class="required">*</span> </label>
+
+                <input
+                    pInputText
+                    id="name"
+                    formControlName="name"
+                    placeholder="Ingrese el nombre del producto"
+                    fluid
+                />
+
+                @if (getFieldError('name'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="brand"> Marca <span class="required">*</span> </label>
+
+                <p-select
+                    inputId="brand"
+                    formControlName="brand_id"
+                    [options]="brandOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione una marca"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    [fluid]="true"
+                    appendTo="body"
+                />
+
+                @if (getFieldError('brand_id'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="product_line">
+                    Línea de producto <span class="required">*</span>
+                </label>
+
+                <p-select
+                    inputId="product_line"
+                    formControlName="product_line_id"
+                    [options]="productLineOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione una línea"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    [fluid]="true"
+                    appendTo="body"
+                />
+
+                @if (getFieldError('product_line_id'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="unit"> Unidad de medida <span class="required">*</span> </label>
+
+                <p-select
+                    inputId="unit"
+                    formControlName="unit_of_measure_id"
+                    [options]="unitOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione una unidad"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    [fluid]="true"
+                    appendTo="body"
+                />
+
+                @if (getFieldError('unit_of_measure_id'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="weight">Peso</label>
+
+                <p-inputnumber
+                    inputId="weight"
+                    formControlName="weight"
+                    [min]="0"
+                    [minFractionDigits]="0"
+                    [maxFractionDigits]="3"
+                    [fluid]="true"
+                    placeholder="0.000"
+                />
+
+                @if (getFieldError('weight'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field full-width">
+                <label for="description">Descripción</label>
+
+                <textarea
+                    pTextarea
+                    id="description"
+                    formControlName="description"
+                    rows="3"
+                    placeholder="Descripción del producto"
+                    fluid
+                ></textarea>
+
+                @if (getFieldError('description'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- PRECIOS -->
+    <section class="form-section">
+        <div class="section-heading">
+            <i class="pi pi-wallet"></i>
+            <div>
+                <h3>Precios</h3>
+                <p>Información de costos y precio de venta.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-field">
+                <label for="average_cost"> Costo promedio <span class="required">*</span> </label>
+
+                <p-inputnumber
+                    inputId="average_cost"
+                    formControlName="average_cost"
+                    mode="currency"
+                    currency="GTQ"
+                    locale="es-GT"
+                    [min]="0"
+                    [fluid]="true"
+                />
+
+                @if (getFieldError('average_cost'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="list_price"> Precio de venta <span class="required">*</span> </label>
+
+                <p-inputnumber
+                    inputId="list_price"
+                    formControlName="list_price"
+                    mode="currency"
+                    currency="GTQ"
+                    locale="es-GT"
+                    [min]="0"
+                    [fluid]="true"
+                />
+
+                @if (getFieldError('list_price'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- INVENTARIO -->
+    <section class="form-section">
+        <div class="section-heading">
+            <i class="pi pi-warehouse"></i>
+            <div>
+                <h3>Inventario</h3>
+                <p>Parámetros de control y reabastecimiento.</p>
+            </div>
+        </div>
+
+        <div class="form-grid three-columns">
+            <div class="form-field">
+                <label for="minimum_stock">Stock mínimo *</label>
+
+                <p-inputnumber
+                    inputId="minimum_stock"
+                    formControlName="minimum_stock"
+                    [min]="0"
+                    [maxFractionDigits]="0"
+                    [fluid]="true"
+                />
+
+                @if (getFieldError('minimum_stock'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="maximum_stock">Stock máximo *</label>
+
+                <p-inputnumber
+                    inputId="maximum_stock"
+                    formControlName="maximum_stock"
+                    [min]="0"
+                    [maxFractionDigits]="0"
+                    [fluid]="true"
+                />
+
+                @if (getFieldError('maximum_stock'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="reorder_point">Punto de reorden *</label>
+
+                <p-inputnumber
+                    inputId="reorder_point"
+                    formControlName="reorder_point"
+                    [min]="0"
+                    [maxFractionDigits]="0"
+                    [fluid]="true"
+                />
+
+                @if (getFieldError('reorder_point'); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            @if (stockRangeError; as error) {
+                <div class="full-width">
+                    <small class="field-error">{{ error }}</small>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- CONFIGURACIÓN -->
+    <section class="form-section">
+        <div class="section-heading">
+            <i class="pi pi-cog"></i>
+            <div>
+                <h3>Configuración</h3>
+                <p>Opciones de seguimiento y disponibilidad.</p>
+            </div>
+        </div>
+
+        <div class="toggle-list">
+            <div class="toggle-field">
+                <div>
+                    <label for="tracks_expiration"> Controlar vencimiento </label>
+                    <small> Permite identificar productos que manejan fecha de vencimiento. </small>
+                </div>
+
+                <p-toggleswitch inputId="tracks_expiration" formControlName="tracks_expiration" />
+            </div>
+
+            <div class="toggle-field">
+                <div>
+                    <label for="is_active">Producto activo</label>
+                    <small> Determina si el producto está habilitado en el sistema. </small>
+                </div>
+
+                <p-toggleswitch inputId="is_active" formControlName="is_active" />
+            </div>
+        </div>
+    </section>
+</form>

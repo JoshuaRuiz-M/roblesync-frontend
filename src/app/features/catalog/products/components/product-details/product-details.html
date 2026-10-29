@@ -1,0 +1,202 @@
+<p-drawer
+    [visible]="visible()"
+    (visibleChange)="visibleChange.emit($event)"
+    position="right"
+    [style]="{ width: 'min(560px, 100vw)' }"
+    styleClass="product-details-drawer"
+>
+    <ng-template #header>
+        <div class="drawer-heading">
+            <h2>Detalles del producto</h2>
+            <span>Información general e inventario</span>
+        </div>
+    </ng-template>
+
+    @if (product(); as item) {
+        <div class="product-details">
+            <!-- PRESENTACIÓN DEL PRODUCTO -->
+            <section class="product-hero">
+                <div class="product-photo">
+                    <i class="pi pi-image"></i>
+                    <small>Sin fotografía</small>
+                </div>
+
+                <div class="product-identity">
+                    <h3>{{ item.name }}</h3>
+
+                    <span class="product-sku">
+                        {{ item.sku }}
+                    </span>
+
+                    <div class="product-badges">
+                        <p-tag
+                            [value]="item.is_active ? 'Activo' : 'Inactivo'"
+                            [severity]="item.is_active ? 'success' : 'secondary'"
+                            [rounded]="true"
+                        />
+
+                        <span class="brand-badge">
+                            {{ brandName() }}
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INFORMACIÓN GENERAL -->
+            <section class="details-section">
+                <div class="section-heading">
+                    <i class="pi pi-box"></i>
+                    <h3>Información general</h3>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span>Marca</span>
+                        <strong>{{ brandName() }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Línea de producto</span>
+                        <strong>{{ productLineName() }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Unidad de medida</span>
+                        <strong>{{ unitName() }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Peso</span>
+                        <strong>
+                            @if (item.weight !== null && item.weight !== undefined) {
+                                {{ item.weight | number: '1.0-3' }}
+                            } @else {
+                                No especificado
+                            }
+                        </strong>
+                    </div>
+                </div>
+
+                @if (item.description) {
+                    <div class="description">
+                        <span>Descripción</span>
+                        <p>{{ item.description }}</p>
+                    </div>
+                }
+            </section>
+
+            <!-- PRECIOS -->
+            <section class="details-section">
+                <div class="section-heading">
+                    <i class="pi pi-wallet"></i>
+                    <h3>Información de precios</h3>
+                </div>
+
+                <div class="price-grid">
+                    <div class="price-card">
+                        <span>Costo promedio</span>
+                        <strong>
+                            {{ formatCurrency(item.average_cost) }}
+                        </strong>
+                    </div>
+
+                    <div class="price-card primary">
+                        <span>Precio de venta</span>
+                        <strong>
+                            {{ formatCurrency(item.list_price) }}
+                        </strong>
+                    </div>
+                </div>
+
+                @if (profitMargin() !== null) {
+                    <div class="margin-info">
+                        <span>Margen bruto estimado</span>
+                        <strong> {{ profitMargin() | number: '1.2-2' }}% </strong>
+                    </div>
+                }
+            </section>
+
+            <!-- INVENTARIO -->
+            <section class="details-section">
+                <div class="section-heading">
+                    <i class="pi pi-warehouse"></i>
+                    <h3>Configuración de inventario</h3>
+                </div>
+
+                <div class="stock-grid">
+                    <div class="stock-item">
+                        <span>Stock mínimo</span>
+                        <strong>{{ item.minimum_stock }}</strong>
+                    </div>
+
+                    <div class="stock-item">
+                        <span>Stock máximo</span>
+                        <strong>{{ item.maximum_stock }}</strong>
+                    </div>
+
+                    <div class="stock-item">
+                        <span>Punto de reorden</span>
+                        <strong>{{ item.reorder_point }}</strong>
+                    </div>
+                </div>
+
+                <div class="expiration-row">
+                    <div>
+                        <strong>Control de vencimiento</strong>
+                        <span>
+                            Indica si el producto requiere seguimiento de fechas de vencimiento.
+                        </span>
+                    </div>
+
+                    <p-tag
+                        [value]="item.tracks_expiration ? 'Sí' : 'No'"
+                        [severity]="item.tracks_expiration ? 'info' : 'secondary'"
+                    />
+                </div>
+            </section>
+
+            <!-- CÓDIGO DE BARRAS -->
+            <section class="details-section">
+                <app-product-barcode [value]="item.barcode" [productName]="item.name" />
+            </section>
+
+            <!-- AUDITORÍA -->
+            <section class="details-section">
+                <div class="section-heading">
+                    <i class="pi pi-clock"></i>
+                    <h3>Registro del producto</h3>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span>Fecha de creación</span>
+                        <strong>
+                            {{ item.created_at | date: 'dd/MM/yyyy HH:mm' }}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Última actualización</span>
+                        <strong>
+                            @if (item.updated_at) {
+                                {{ item.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+                            } @else {
+                                Sin actualizaciones
+                            }
+                        </strong>
+                    </div>
+                </div>
+            </section>
+        </div>
+    }
+
+    <ng-template #footer>
+        <div class="drawer-footer">
+            <p-button label="Cerrar" severity="secondary" [outlined]="true" (onClick)="close()" />
+
+            @if (canEdit() && product()) {
+                <p-button label="Editar producto" icon="pi pi-pencil" (onClick)="onEdit()" />
+            }
+        </div>
+    </ng-template>
+</p-drawer>

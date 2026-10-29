@@ -85,6 +85,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'products',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/catalog/products/products.routes').then(
+                        (m) => m.PRODUCTS_ROUTES,
+                    ),
+            },
+            {
                 path: 'forbidden',
                 title: 'Acceso denegado',
                 loadComponent: () =>

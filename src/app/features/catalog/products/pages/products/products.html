@@ -1,0 +1,100 @@
+<section class="products-page">
+    <header class="page-heading">
+        <div class="page-heading-content">
+            <div class="page-heading-icon">
+                <i class="pi pi-box"></i>
+            </div>
+
+            <div class="page-heading-text">
+                <h1>Productos</h1>
+
+                <p>
+                    Administre los productos, precios y configuraciones de inventario del sistema.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <div class="products-content">
+        <app-data-grid
+            [data]="products()"
+            [columns]="columns"
+            [pagination]="pagination()"
+            [config]="gridConfig()"
+            [actions]="actions()"
+            [loading]="loading()"
+            [error]="error()"
+            (queryChange)="onQueryChange($event)"
+            (refresh)="refresh()"
+            (create)="onCreate()"
+            (actionClick)="onAction($event)"
+        />
+    </div>
+
+    <!-- FORMULARIO CREAR / EDITAR -->
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving() || !catalogsReady()"
+        saveLabel="Guardar producto"
+        (save)="saveProduct()"
+    >
+        <!-- CARGANDO CATÁLOGOS -->
+        @if (loadingCatalogs()) {
+            <div class="catalog-loading">
+                <i class="pi pi-spin pi-spinner"></i>
+
+                <div>
+                    <strong>Cargando información</strong>
+                    <p>Obteniendo marcas, líneas de producto y unidades de medida...</p>
+                </div>
+            </div>
+        }
+
+        <!-- ERROR DE CATÁLOGOS -->
+        @if (catalogsError()) {
+            <div class="catalog-error">
+                <div class="catalog-error-icon">
+                    <i class="pi pi-exclamation-triangle"></i>
+                </div>
+
+                <h3>No se pudo cargar la información</h3>
+
+                <p>
+                    Ocurrió un problema al obtener las marcas, líneas de producto o unidades de
+                    medida.
+                </p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadCatalogs()"
+                />
+            </div>
+        }
+
+        <!-- FORMULARIO -->
+        @if (catalogsReady()) {
+            <app-products-form
+                [product]="selectedProduct()"
+                [brandItems]="brandItems()"
+                [productLineItems]="productLineItems()"
+                [unitItems]="unitItems()"
+            />
+        }
+    </app-form-dialog>
+
+    <!-- DETALLES DEL PRODUCTO -->
+    <app-product-details
+        [(visible)]="detailsVisible"
+        [product]="selectedDetailsProduct()"
+        [brandItems]="brandItems()"
+        [productLineItems]="productLineItems()"
+        [unitItems]="unitItems()"
+        [canEdit]="canEditProduct()"
+        (edit)="onEditFromDetails($event)"
+    />
+</section>

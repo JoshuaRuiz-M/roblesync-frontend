@@ -1,0 +1,51 @@
+<div class="barcode-card">
+    <div class="barcode-header">
+        <div>
+            <h3>Código de barras</h3>
+            <p>Identificación del producto</p>
+        </div>
+
+        <i class="pi pi-barcode"></i>
+    </div>
+
+    <div class="barcode-preview">
+        <svg
+            #barcodeSvg
+            xmlns="http://www.w3.org/2000/svg"
+            role="img"
+            [attr.aria-label]="'Código de barras ' + value()"
+        ></svg>
+
+        @if (invalidBarcode()) {
+            <div class="barcode-error">
+                <i class="pi pi-exclamation-circle"></i>
+                <span> No se puede generar el código de barras con el valor proporcionado. </span>
+            </div>
+        }
+    </div>
+
+    <div class="barcode-footer">
+        <span class="barcode-value">{{ value() }}</span>
+
+        <div class="barcode-actions">
+            <p-button
+                icon="pi pi-copy"
+                [label]="copied() ? 'Copiado' : 'Copiar'"
+                severity="secondary"
+                [outlined]="true"
+                size="small"
+                (onClick)="copyBarcode()"
+            />
+
+            <p-button
+                icon="pi pi-print"
+                label="Imprimir"
+                severity="secondary"
+                [outlined]="true"
+                size="small"
+                [disabled]="invalidBarcode()"
+                (onClick)="printBarcode()"
+            />
+        </div>
+    </div>
+</div>
