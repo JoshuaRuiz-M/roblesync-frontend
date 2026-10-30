@@ -165,6 +165,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'warehouse-transfers',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/logistics/warehouse-transfers/warehouse-transfers.routes').then(
+                        (m) => m.WAREHOUSE_TRANSFERS_ROUTES,
+                    ),
+            },
+            {
                 path: 'forbidden',
                 title: 'Acceso denegado',
                 loadComponent: () =>
