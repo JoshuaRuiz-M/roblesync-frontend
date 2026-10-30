@@ -173,6 +173,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'customers',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/sales/customers/customers.routes').then(
+                        (m) => m.CUSTOMERS_ROUTES,
+                    ),
+            },
+            {
                 path: 'forbidden',
                 title: 'Acceso denegado',
                 loadComponent: () =>
