@@ -1,0 +1,82 @@
+<section class="supplier-invoices-page">
+    <header class="page-heading">
+        <div class="page-heading-content">
+            <div class="page-heading-icon">
+                <i class="pi pi-file"></i>
+            </div>
+
+            <div class="page-heading-text">
+                <h1>Facturas de proveedores</h1>
+                <p>Administre las facturas recibidas, sus importes, vencimientos y estados.</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="invoices-content">
+        <app-data-grid
+            [data]="invoices()"
+            [columns]="columns"
+            [pagination]="pagination()"
+            [config]="gridConfig()"
+            [actions]="actions()"
+            [loading]="loading()"
+            [error]="error()"
+            (queryChange)="onQueryChange($event)"
+            (refresh)="refresh()"
+            (create)="onCreate()"
+            (actionClick)="onAction($event)"
+        />
+    </div>
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving() || !catalogsReady()"
+        saveLabel="Guardar factura"
+        (save)="saveInvoice()"
+    >
+        @if (loadingCatalogs()) {
+            <div class="catalog-loading">
+                <i class="pi pi-spin pi-spinner"></i>
+                <div>
+                    <strong>Cargando información</strong>
+                    <p>Obteniendo proveedores y órdenes de compra...</p>
+                </div>
+            </div>
+        }
+
+        @if (catalogsError()) {
+            <div class="catalog-error">
+                <i class="pi pi-exclamation-triangle"></i>
+                <h3>No se pudo cargar la información</h3>
+                <p>Ocurrió un problema al obtener los catálogos.</p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadCatalogs()"
+                />
+            </div>
+        }
+
+        @if (catalogsReady()) {
+            <app-supplier-invoices-form
+                [invoice]="selectedInvoice()"
+                [supplierItems]="supplierItems()"
+                [purchaseOrderItems]="purchaseOrderItems()"
+            />
+        }
+    </app-form-dialog>
+
+    <app-supplier-invoice-details
+        [(visible)]="detailsVisible"
+        [invoice]="selectedDetailsInvoice()"
+        [supplierItems]="supplierItems()"
+        [purchaseOrderItems]="purchaseOrderItems()"
+        [canEdit]="canEditInvoice()"
+        (edit)="onEditFromDetails($event)"
+    />
+</section>

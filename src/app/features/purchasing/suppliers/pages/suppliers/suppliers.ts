@@ -117,8 +117,9 @@ export class Suppliers {
         },
         {
             field: 'is_active',
-            header: 'Activo',
-            width: '100px',
+            header: 'Estado',
+            type: 'boolean',
+            width: '110px',
         },
     ];
 

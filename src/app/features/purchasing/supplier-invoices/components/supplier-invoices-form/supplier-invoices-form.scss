@@ -1,0 +1,87 @@
+.invoice-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    &:not(:last-child) {
+        padding-bottom: 1.75rem;
+        border-bottom: 1px solid var(--p-content-border-color);
+    }
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    > i {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--p-content-hover-background);
+        color: var(--p-primary-color);
+        font-size: 1.1rem;
+    }
+
+    h3 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    p {
+        margin: 0.25rem 0 0;
+        color: var(--p-text-muted-color);
+        font-size: 0.8rem;
+    }
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.15rem;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+
+    label {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.field-error {
+    color: var(--p-red-500);
+    font-size: 0.75rem;
+}
+
+:host ::ng-deep {
+    .w-full,
+    .w-full .p-inputnumber-input,
+    .w-full .p-datepicker-input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 540px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

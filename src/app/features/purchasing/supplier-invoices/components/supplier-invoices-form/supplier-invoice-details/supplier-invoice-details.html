@@ -1,0 +1,151 @@
+<p-drawer
+    [visible]="visible()"
+    (visibleChange)="visibleChange.emit($event)"
+    position="right"
+    [style]="{ width: 'min(580px, 100vw)' }"
+>
+    <ng-template #header>
+        <div class="drawer-heading">
+            <h2>Detalles de factura</h2>
+            <span>Documento de proveedor</span>
+        </div>
+    </ng-template>
+
+    @if (invoice(); as item) {
+        <div class="invoice-details">
+            <section class="invoice-hero">
+                <div class="invoice-icon">
+                    <i class="pi pi-file"></i>
+                </div>
+
+                <div class="invoice-heading">
+                    <span>FACTURA DE PROVEEDOR</span>
+                    <h3>{{ item.invoice_number }}</h3>
+                    <p>
+                        {{ purchaseOrder()?.order_number ?? 'Orden #' + item.purchase_order_id }}
+                    </p>
+                </div>
+
+                <p-tag
+                    [value]="statusLabels[item.status]"
+                    [severity]="item.status === 'REGISTERED' ? 'success' : 'danger'"
+                    [rounded]="true"
+                />
+            </section>
+
+            <section class="supplier-card">
+                <div class="section-title">
+                    <i class="pi pi-building"></i>
+                    <h3>Proveedor</h3>
+                </div>
+
+                <strong>
+                    {{ supplier()?.business_name ?? 'Proveedor #' + item.supplier_id }}
+                </strong>
+
+                @if (supplier(); as provider) {
+                    <span>NIT: {{ provider.tax_id }}</span>
+
+                    @if (provider.email) {
+                        <span>{{ provider.email }}</span>
+                    }
+
+                    @if (provider.phone) {
+                        <span>{{ provider.phone }}</span>
+                    }
+                }
+            </section>
+
+            <section class="details-section">
+                <div class="section-title">
+                    <i class="pi pi-calendar"></i>
+                    <h3>Fechas del documento</h3>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span>Fecha de emisión</span>
+                        <strong>{{ item.invoice_date | date: 'dd/MM/yyyy' }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Fecha de vencimiento</span>
+                        <strong>{{ item.due_date | date: 'dd/MM/yyyy' }}</strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="details-section">
+                <div class="section-title">
+                    <i class="pi pi-wallet"></i>
+                    <h3>Resumen financiero</h3>
+                </div>
+
+                <div class="financial-summary">
+                    <div class="financial-row">
+                        <span>Subtotal</span>
+                        <strong>{{ formatCurrency(item.subtotal) }}</strong>
+                    </div>
+
+                    <div class="financial-row">
+                        <span>Impuestos</span>
+                        <strong>{{ formatCurrency(item.tax_amount) }}</strong>
+                    </div>
+
+                    <div class="financial-total">
+                        <span>Total de factura</span>
+                        <strong>{{ formatCurrency(item.total_amount) }}</strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="details-section">
+                <div class="section-title">
+                    <i class="pi pi-align-left"></i>
+                    <h3>Observaciones</h3>
+                </div>
+
+                <p class="notes">
+                    {{ item.notes || 'Sin observaciones registradas.' }}
+                </p>
+            </section>
+
+            <section class="details-section">
+                <div class="section-title">
+                    <i class="pi pi-clock"></i>
+                    <h3>Registro del documento</h3>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span>Fecha de creación</span>
+                        <strong>
+                            {{ item.created_at | date: 'dd/MM/yyyy HH:mm' }}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Última actualización</span>
+                        <strong>
+                            @if (item.updated_at) {
+                                {{ item.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+                            } @else {
+                                Sin actualizaciones
+                            }
+                        </strong>
+                    </div>
+                </div>
+            </section>
+        </div>
+    }
+
+    <ng-template #footer>
+        <div class="drawer-footer">
+            <p-button label="Cerrar" severity="secondary" [outlined]="true" (onClick)="close()" />
+
+            @if (canEdit() && invoice()?.status === 'REGISTERED') {
+                <p-button label="Editar factura" icon="pi pi-pencil" (onClick)="onEdit()" />
+            }
+        </div>
+    </ng-template>
+</p-drawer>

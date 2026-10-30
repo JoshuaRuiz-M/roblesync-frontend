@@ -1,0 +1,191 @@
+<form [formGroup]="form" class="invoice-form">
+    <div class="form-section">
+        <div class="section-heading">
+            <i class="pi pi-building"></i>
+            <div>
+                <h3>Información del documento</h3>
+                <p>Proveedor y orden de compra relacionada</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-field full-width">
+                <label for="supplier">Proveedor *</label>
+                <p-select
+                    inputId="supplier"
+                    formControlName="supplier_id"
+                    [options]="supplierOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione un proveedor"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    appendTo="body"
+                    styleClass="w-full"
+                />
+                @if (hasError('supplier_id')) {
+                    <small class="field-error">Seleccione un proveedor.</small>
+                }
+            </div>
+
+            <div class="form-field full-width">
+                <label for="purchaseOrder">Orden de compra *</label>
+                <p-select
+                    inputId="purchaseOrder"
+                    formControlName="purchase_order_id"
+                    [options]="purchaseOrderOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione una orden de compra"
+                    [filter]="true"
+                    [showClear]="true"
+                    appendTo="body"
+                    styleClass="w-full"
+                />
+                @if (hasError('purchase_order_id')) {
+                    <small class="field-error"> Seleccione una orden válida del proveedor. </small>
+                }
+            </div>
+
+            <div class="form-field full-width">
+                <label for="invoiceNumber">Número de factura *</label>
+                <input
+                    pInputText
+                    id="invoiceNumber"
+                    formControlName="invoice_number"
+                    placeholder="Ej. FAC-2026-001"
+                    class="w-full"
+                />
+                @if (hasError('invoice_number')) {
+                    <small class="field-error">
+                        Ingrese un número de factura de máximo 50 caracteres.
+                    </small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="invoiceDate">Fecha de emisión *</label>
+                <p-datepicker
+                    inputId="invoiceDate"
+                    formControlName="invoice_date"
+                    dateFormat="dd/mm/yy"
+                    [showIcon]="true"
+                    [showButtonBar]="true"
+                    appendTo="body"
+                    styleClass="w-full"
+                />
+            </div>
+
+            <div class="form-field">
+                <label for="dueDate">Fecha de vencimiento *</label>
+                <p-datepicker
+                    inputId="dueDate"
+                    formControlName="due_date"
+                    dateFormat="dd/mm/yy"
+                    [showIcon]="true"
+                    [showButtonBar]="true"
+                    appendTo="body"
+                    styleClass="w-full"
+                />
+            </div>
+
+            @if (form.hasError('invalidDates') && form.touched) {
+                <small class="field-error full-width">
+                    La fecha de vencimiento no puede ser anterior a la de emisión.
+                </small>
+            }
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="section-heading">
+            <i class="pi pi-wallet"></i>
+            <div>
+                <h3>Importes de la factura</h3>
+                <p>Valores expresados en quetzales</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-field">
+                <label for="subtotal">Subtotal *</label>
+                <p-inputnumber
+                    inputId="subtotal"
+                    formControlName="subtotal"
+                    mode="currency"
+                    currency="GTQ"
+                    locale="es-GT"
+                    [min]="0"
+                    [minFractionDigits]="2"
+                    styleClass="w-full"
+                />
+            </div>
+
+            <div class="form-field">
+                <label for="taxAmount">Impuestos *</label>
+                <p-inputnumber
+                    inputId="taxAmount"
+                    formControlName="tax_amount"
+                    mode="currency"
+                    currency="GTQ"
+                    locale="es-GT"
+                    [min]="0"
+                    [minFractionDigits]="2"
+                    styleClass="w-full"
+                />
+            </div>
+
+            <div class="form-field full-width">
+                <label for="totalAmount">Total de factura</label>
+                <p-inputnumber
+                    inputId="totalAmount"
+                    formControlName="total_amount"
+                    mode="currency"
+                    currency="GTQ"
+                    locale="es-GT"
+                    [readonly]="true"
+                    styleClass="w-full"
+                />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="section-heading">
+            <i class="pi pi-file-edit"></i>
+            <div>
+                <h3>Estado y observaciones</h3>
+                <p>Información adicional de la factura</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-field full-width">
+                <label for="status">Estado *</label>
+                <p-select
+                    inputId="status"
+                    formControlName="status"
+                    [options]="statusOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    appendTo="body"
+                    styleClass="w-full"
+                />
+            </div>
+
+            <div class="form-field full-width">
+                <label for="notes">Observaciones</label>
+                <textarea
+                    pTextarea
+                    id="notes"
+                    formControlName="notes"
+                    rows="4"
+                    maxlength="500"
+                    placeholder="Agregue observaciones adicionales..."
+                    class="w-full"
+                ></textarea>
+            </div>
+        </div>
+    </div>
+</form>

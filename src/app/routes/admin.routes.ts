@@ -117,6 +117,22 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'goods-receipts',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/purchasing/goods-receipts/goods-receipts.routes').then(
+                        (m) => m.GOODS_RECEIPTS_ROUTES,
+                    ),
+            },
+            {
+                path: 'suppliers-invoices',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/purchasing/supplier-invoices/supplier-invoices.routes').then(
+                        (m) => m.SUPPLIER_INVOICES_ROUTES,
+                    ),
+            },
+            {
                 path: 'forbidden',
                 title: 'Acceso denegado',
                 loadComponent: () =>
