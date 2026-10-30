@@ -1,0 +1,213 @@
+<form class="goods-receipt-form" [formGroup]="form">
+    <section class="form-section">
+        <div class="section-heading">
+            <div class="section-icon">
+                <i class="pi pi-truck"></i>
+            </div>
+
+            <div>
+                <h3>Información de la recepción</h3>
+                <p>Seleccione la orden de compra y el almacén de destino.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-field">
+                <label for="purchase-order">
+                    Orden de compra <span class="required">*</span>
+                </label>
+
+                <p-select
+                    inputId="purchase-order"
+                    formControlName="purchase_order_id"
+                    [options]="orderOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione una orden de compra"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    [readonly]="receipt() !== null"
+                    appendTo="body"
+                    styleClass="w-full"
+                    (onChange)="onOrderChange($event.value)"
+                />
+
+                @if (getFieldError(form.controls.purchase_order_id); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="warehouse"> Almacén de destino <span class="required">*</span> </label>
+
+                <p-select
+                    inputId="warehouse"
+                    formControlName="warehouse_id"
+                    [options]="warehouseOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione un almacén"
+                    [filter]="true"
+                    filterBy="label"
+                    appendTo="body"
+                    styleClass="w-full"
+                />
+
+                @if (getFieldError(form.controls.warehouse_id); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field notes-field">
+                <label for="notes">Observaciones</label>
+
+                <textarea
+                    pTextarea
+                    id="notes"
+                    formControlName="notes"
+                    rows="3"
+                    maxlength="500"
+                    placeholder="Agregue observaciones sobre la mercancía recibida..."
+                    class="w-full"
+                ></textarea>
+
+                @if (getFieldError(form.controls.notes); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="form-section details-section">
+        <div class="section-heading">
+            <div class="section-icon">
+                <i class="pi pi-box"></i>
+            </div>
+
+            <div>
+                <h3>Productos recibidos</h3>
+                <p>Indique las cantidades y los datos de los lotes recibidos.</p>
+            </div>
+        </div>
+
+        @if (!selectedOrder()) {
+            <div class="empty-products">
+                <i class="pi pi-inbox"></i>
+                <h3>Seleccione una orden de compra</h3>
+                <p>Los productos de la orden aparecerán aquí automáticamente.</p>
+            </div>
+        } @else {
+            <div class="details-table-wrapper">
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Producto</th>
+                            <th>Cantidad solicitada</th>
+                            <th>Cantidad recibida</th>
+                            <th>Número de lote</th>
+                            <th>Fabricación</th>
+                            <th>Vencimiento</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody formArrayName="details">
+                        @for (detail of detailControls; track detail; let i = $index) {
+                            <tr [formGroupName]="i">
+                                <td>
+                                    <span class="row-number">{{ i + 1 }}</span>
+                                </td>
+
+                                <td class="product-cell">
+                                    <strong>{{ getProductName(i) }}</strong>
+                                </td>
+
+                                <td>
+                                    {{ formatQuantity(getOrderedQuantity(i)) }}
+                                </td>
+
+                                <td>
+                                    <p-inputnumber
+                                        formControlName="quantity_received"
+                                        [min]="0.001"
+                                        [minFractionDigits]="0"
+                                        [maxFractionDigits]="3"
+                                        [useGrouping]="false"
+                                        styleClass="w-full"
+                                    />
+
+                                    @if (
+                                        getFieldError(detail.controls.quantity_received);
+                                        as error
+                                    ) {
+                                        <small class="field-error">{{ error }}</small>
+                                    }
+                                </td>
+
+                                <td>
+                                    <input
+                                        pInputText
+                                        formControlName="batch_number"
+                                        placeholder="Automático"
+                                        class="w-full"
+                                    />
+                                </td>
+
+                                <td>
+                                    <p-datepicker
+                                        formControlName="manufacturing_date"
+                                        dateFormat="dd/mm/yy"
+                                        [showIcon]="true"
+                                        appendTo="body"
+                                        styleClass="w-full"
+                                    />
+                                </td>
+
+                                <td>
+                                    <p-datepicker
+                                        formControlName="expiration_date"
+                                        dateFormat="dd/mm/yy"
+                                        [showIcon]="true"
+                                        appendTo="body"
+                                        styleClass="w-full"
+                                    />
+                                </td>
+
+                                <td>
+                                    <p-button
+                                        icon="pi pi-trash"
+                                        severity="danger"
+                                        [text]="true"
+                                        [rounded]="true"
+                                        size="small"
+                                        (onClick)="removeDetail(i)"
+                                    />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (details.hasError('invalidDates')) {
+                <p-message severity="error">
+                    La fecha de vencimiento no puede ser anterior a la fabricación.
+                </p-message>
+            }
+
+            <div class="details-footer">
+                <span>
+                    <i class="pi pi-box"></i>
+                    {{ details.length }} productos registrados
+                </span>
+
+                <span>
+                    Cantidad total:
+                    <strong>{{ formatQuantity(totalQuantity()) }}</strong>
+                </span>
+            </div>
+        }
+    </section>
+</form>

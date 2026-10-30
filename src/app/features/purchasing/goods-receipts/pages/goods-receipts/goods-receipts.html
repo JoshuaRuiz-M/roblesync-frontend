@@ -1,0 +1,100 @@
+<section class="goods-receipts-page">
+    <header class="page-heading">
+        <div class="page-heading-content">
+            <div class="page-heading-icon">
+                <i class="pi pi-truck"></i>
+            </div>
+
+            <div class="page-heading-text">
+                <h1>Recepción de mercancías</h1>
+                <p>
+                    Administre las recepciones de productos, almacenes y movimientos de ingreso al
+                    inventario.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <div class="goods-receipts-content">
+        <app-data-grid
+            [data]="receipts()"
+            [columns]="columns"
+            [pagination]="pagination()"
+            [config]="gridConfig()"
+            [actions]="actions()"
+            [loading]="loading()"
+            [error]="error()"
+            (queryChange)="onQueryChange($event)"
+            (refresh)="refresh()"
+            (create)="onCreate()"
+            (actionClick)="onAction($event)"
+        />
+    </div>
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving() || !catalogsReady()"
+        [saveLabel]="selectedReceipt() ? 'Guardar cambios' : 'Guardar recepción'"
+        (save)="saveReceipt()"
+        width="95vw"
+    >
+        @if (loadingCatalogs()) {
+            <div class="catalog-loading">
+                <i class="pi pi-spin pi-spinner"></i>
+
+                <div>
+                    <strong>Cargando información</strong>
+                    <p>Obteniendo órdenes de compra, almacenes y productos disponibles...</p>
+                </div>
+            </div>
+        }
+
+        @if (catalogsError()) {
+            <div class="catalog-error">
+                <div class="catalog-error-icon">
+                    <i class="pi pi-exclamation-triangle"></i>
+                </div>
+
+                <h3>No se pudo cargar la información</h3>
+
+                <p>
+                    Ocurrió un problema al obtener los datos necesarios para registrar la recepción.
+                </p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadCatalogs()"
+                />
+            </div>
+        }
+
+        @if (catalogsReady()) {
+            <app-goods-receipts-form
+                [receipt]="selectedReceipt()"
+                [orders]="orderItems()"
+                [warehouses]="warehouseItems()"
+                [products]="productItems()"
+            />
+        }
+    </app-form-dialog>
+
+    <app-goods-receipt-details
+        [(visible)]="detailsVisible"
+        [receipt]="selectedDetailsReceipt()"
+        [orders]="purchaseOrders()"
+        [warehouses]="warehouseItems()"
+        [products]="productItems()"
+        [canEdit]="canEdit()"
+        [canConfirm]="canConfirm()"
+        [canCancel]="canCancel()"
+        [processing]="processingReceiptId() !== null"
+        (edit)="onEditFromDetails($event)"
+        (confirm)="onConfirm($event)"
+        (cancel)="onCancel($event)"
+    />
+</section>

@@ -1,0 +1,326 @@
+<p-drawer
+    [(visible)]="visible"
+    position="right"
+    [modal]="true"
+    [dismissible]="true"
+    [blockScroll]="true"
+    styleClass="goods-receipt-details-drawer"
+>
+    <ng-template #header>
+        <div class="drawer-heading">
+            <div class="drawer-heading-icon">
+                <i class="pi pi-truck"></i>
+            </div>
+
+            <div class="drawer-heading-text">
+                <h2>Detalle de recepción</h2>
+                <span>
+                    {{ receipt()?.receipt_number ?? 'Recepción de mercancías' }}
+                </span>
+            </div>
+        </div>
+    </ng-template>
+
+    @if (receipt(); as currentReceipt) {
+        <div class="receipt-details">
+            <section class="receipt-hero">
+                <div class="receipt-hero-top">
+                    <div class="receipt-hero-icon">
+                        <i class="pi pi-box"></i>
+                    </div>
+
+                    <p-tag
+                        [value]="status().label"
+                        [severity]="status().severity"
+                        [icon]="status().icon"
+                        [rounded]="true"
+                    />
+                </div>
+
+                <div class="receipt-hero-content">
+                    <span class="eyebrow">Recepción de mercancías</span>
+
+                    <h3>{{ currentReceipt.receipt_number }}</h3>
+
+                    <p>
+                        Registrada el
+                        {{ formatDate(currentReceipt.receipt_date) }}
+                    </p>
+                </div>
+
+                <div class="receipt-hero-total">
+                    <span>Valor de mercancía recibida</span>
+                    <strong>{{ formatCurrency(totalAmount()) }}</strong>
+                </div>
+            </section>
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-shopping-cart"></i>
+                    </div>
+
+                    <h3>Orden de compra</h3>
+                </div>
+
+                <div class="information-card">
+                    <div class="information-card-icon">
+                        <i class="pi pi-file"></i>
+                    </div>
+
+                    <div>
+                        <strong>
+                            {{ order()?.order_number ?? 'Orden no disponible' }}
+                        </strong>
+
+                        <span> Orden de compra #{{ currentReceipt.purchase_order_id }} </span>
+                    </div>
+                </div>
+            </section>
+
+            <p-divider />
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-warehouse"></i>
+                    </div>
+
+                    <h3>Almacén de destino</h3>
+                </div>
+
+                <div class="information-card">
+                    <div class="information-card-icon">
+                        <i class="pi pi-building"></i>
+                    </div>
+
+                    <div>
+                        <strong>
+                            {{ warehouse()?.name ?? 'Almacén no disponible' }}
+                        </strong>
+
+                        <span>
+                            {{ warehouse()?.code ?? 'Sin código disponible' }}
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <p-divider />
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-calendar"></i>
+                    </div>
+
+                    <h3>Información de la recepción</h3>
+                </div>
+
+                <div class="information-grid">
+                    <div class="information-item">
+                        <span>Fecha de recepción</span>
+                        <strong>
+                            {{ formatDate(currentReceipt.receipt_date) }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Fecha de confirmación</span>
+                        <strong>
+                            {{ formatDate(currentReceipt.confirmed_at) }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Productos registrados</span>
+                        <strong>{{ currentReceipt.details.length }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Unidades recibidas</span>
+                        <strong>{{ formatQuantity(totalQuantity()) }}</strong>
+                    </div>
+                </div>
+            </section>
+
+            <p-divider />
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-box"></i>
+                    </div>
+
+                    <div class="section-heading-text">
+                        <h3>Productos recibidos</h3>
+                        <p>
+                            {{ currentReceipt.details.length }}
+                            líneas registradas
+                        </p>
+                    </div>
+                </div>
+
+                <div class="products-list">
+                    @for (
+                        detail of currentReceipt.details;
+                        track detail.goods_receipt_detail_id;
+                        let i = $index
+                    ) {
+                        <article class="product-card">
+                            <div class="product-card-heading">
+                                <div class="product-number">
+                                    {{ i + 1 }}
+                                </div>
+
+                                <div class="product-information">
+                                    <strong>
+                                        {{ getProductName(detail.product_id) }}
+                                    </strong>
+
+                                    <span>
+                                        {{ getProductSku(detail.product_id) }}
+                                    </span>
+                                </div>
+
+                                <div class="product-total">
+                                    {{
+                                        formatCurrency(detail.quantity_received * detail.unit_cost)
+                                    }}
+                                </div>
+                            </div>
+
+                            <div class="product-card-details">
+                                <div>
+                                    <span>Cantidad recibida</span>
+                                    <strong>
+                                        {{ formatQuantity(detail.quantity_received) }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Costo unitario</span>
+                                    <strong>
+                                        {{ formatUnitCost(detail.unit_cost) }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>ID de lote</span>
+                                    <strong>#{{ detail.batch_id }}</strong>
+                                </div>
+
+                                <div>
+                                    <span>Subtotal</span>
+                                    <strong>
+                                        {{
+                                            formatCurrency(
+                                                detail.quantity_received * detail.unit_cost
+                                            )
+                                        }}
+                                    </strong>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </section>
+
+            <section class="totals-card">
+                <div class="totals-heading">
+                    <i class="pi pi-calculator"></i>
+                    <h3>Resumen de recepción</h3>
+                </div>
+
+                <div class="total-row">
+                    <span>Productos recibidos</span>
+                    <strong>{{ currentReceipt.details.length }}</strong>
+                </div>
+
+                <div class="total-row">
+                    <span>Cantidad total</span>
+                    <strong>{{ formatQuantity(totalQuantity()) }}</strong>
+                </div>
+
+                <div class="total-divider"></div>
+
+                <div class="grand-total">
+                    <span>Valor total recibido</span>
+                    <strong>{{ formatCurrency(totalAmount()) }}</strong>
+                </div>
+            </section>
+
+            @if (currentReceipt.notes) {
+                <section class="detail-section">
+                    <div class="section-heading">
+                        <div class="section-heading-icon">
+                            <i class="pi pi-align-left"></i>
+                        </div>
+
+                        <h3>Observaciones</h3>
+                    </div>
+
+                    <div class="notes-card">
+                        {{ currentReceipt.notes }}
+                    </div>
+                </section>
+            }
+
+            <div class="receipt-audit">
+                <i class="pi pi-clock"></i>
+
+                <span>
+                    Última actualización:
+                    {{
+                        currentReceipt.updated_at
+                            ? formatDate(currentReceipt.updated_at)
+                            : 'Sin modificaciones'
+                    }}
+                </span>
+            </div>
+        </div>
+    }
+
+    <ng-template #footer>
+        <div class="drawer-footer">
+            <p-button
+                label="Cerrar"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="visible.set(false)"
+            />
+
+            @if (canCancelReceipt()) {
+                <p-button
+                    label="Cancelar recepción"
+                    icon="pi pi-times"
+                    severity="danger"
+                    [outlined]="true"
+                    [disabled]="processing()"
+                    (onClick)="onCancel()"
+                />
+            }
+
+            @if (canEditReceipt()) {
+                <p-button
+                    label="Editar"
+                    icon="pi pi-pencil"
+                    severity="secondary"
+                    [outlined]="true"
+                    [disabled]="processing()"
+                    (onClick)="onEdit()"
+                />
+            }
+
+            @if (canConfirmReceipt()) {
+                <p-button
+                    label="Confirmar"
+                    icon="pi pi-check"
+                    severity="success"
+                    [loading]="processing()"
+                    (onClick)="onConfirm()"
+                />
+            }
+        </div>
+    </ng-template>
+</p-drawer>
