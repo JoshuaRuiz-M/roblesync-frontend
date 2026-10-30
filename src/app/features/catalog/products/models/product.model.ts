@@ -56,3 +56,34 @@ export interface UpdateProduct {
     tracks_expiration?: boolean;
     is_active?: boolean;
 }
+
+export interface ProductSupplier {
+    product_supplier_id: number;
+    product_id: number;
+    supplier_id: number;
+    is_preferred: boolean;
+    is_active: boolean;
+    created_at: Date;
+    created_by: number;
+    updated_at: Date | null;
+    updated_by: number | null;
+}
+
+export interface ProductSupplierDetail extends ProductSupplier {
+    tax_id: string;
+    business_name: string;
+    contact_name: string | null;
+    phone: string | null;
+    email: string | null;
+}
+
+export interface CreateProductSupplier {
+    supplier_id: number;
+    is_preferred?: boolean;
+    is_active?: boolean;
+}
+
+export interface UpdateProductSupplier {
+    is_preferred?: boolean;
+    is_active?: boolean;
+}

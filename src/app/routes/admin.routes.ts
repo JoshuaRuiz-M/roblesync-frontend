@@ -101,6 +101,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'purchase-orders',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/purchasing/purchase-orders/purchase-orders.routes').then(
+                        (m) => m.PURCHASE_ORDERS_ROUTES,
+                    ),
+            },
+            {
                 path: 'product-batches',
                 canActivate: [menuGuard],
                 loadChildren: () =>

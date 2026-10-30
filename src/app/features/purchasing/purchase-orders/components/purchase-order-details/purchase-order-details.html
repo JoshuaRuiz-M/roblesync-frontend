@@ -1,0 +1,296 @@
+<p-drawer
+    [(visible)]="visible"
+    position="right"
+    [modal]="true"
+    [dismissible]="true"
+    [blockScroll]="true"
+    styleClass="purchase-order-details-drawer"
+>
+    <ng-template #header>
+        <div class="drawer-heading">
+            <div class="drawer-heading-icon">
+                <i class="pi pi-shopping-cart"></i>
+            </div>
+
+            <div class="drawer-heading-text">
+                <h2>Detalle de orden</h2>
+                <span>{{ order()?.order_number ?? 'Orden de compra' }}</span>
+            </div>
+        </div>
+    </ng-template>
+
+    @if (order(); as currentOrder) {
+        <div class="order-details">
+            <section class="order-hero">
+                <div class="order-hero-top">
+                    <div class="order-hero-icon">
+                        <i class="pi pi-file"></i>
+                    </div>
+
+                    <p-tag
+                        [value]="status().label"
+                        [severity]="status().severity"
+                        [icon]="status().icon"
+                        [rounded]="true"
+                    />
+                </div>
+
+                <div class="order-hero-content">
+                    <span class="eyebrow">Orden de compra</span>
+
+                    <h3>{{ currentOrder.order_number }}</h3>
+
+                    <p>
+                        Registrada el
+                        {{ formatDate(currentOrder.order_date) }}
+                    </p>
+                </div>
+
+                <div class="order-hero-total">
+                    <span>Importe total</span>
+                    <strong>{{ formatCurrency(currentOrder.total_amount) }}</strong>
+                </div>
+            </section>
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-building"></i>
+                    </div>
+
+                    <h3>Proveedor</h3>
+                </div>
+
+                <div class="supplier-card">
+                    <div class="supplier-avatar">
+                        <i class="pi pi-building"></i>
+                    </div>
+
+                    <div class="supplier-information">
+                        <strong>
+                            {{ supplier()?.business_name ?? 'Proveedor no disponible' }}
+                        </strong>
+
+                        <span>
+                            {{ supplier()?.tax_id ?? 'Sin identificación fiscal' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="information-grid">
+                    <div class="information-item">
+                        <span>Contacto</span>
+                        <strong>{{ supplier()?.contact_name || 'No registrado' }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Teléfono</span>
+                        <strong>{{ supplier()?.phone || 'No registrado' }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Correo electrónico</span>
+                        <strong>{{ supplier()?.email || 'No registrado' }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Días de crédito</span>
+                        <strong>{{ supplier()?.credit_days ?? 0 }} días</strong>
+                    </div>
+                </div>
+            </section>
+
+            <p-divider />
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-calendar"></i>
+                    </div>
+
+                    <h3>Información de la orden</h3>
+                </div>
+
+                <div class="information-grid">
+                    <div class="information-item">
+                        <span>Fecha de orden</span>
+                        <strong>{{ formatDate(currentOrder.order_date) }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Fecha esperada</span>
+                        <strong>{{ formatDate(currentOrder.expected_date) }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Productos registrados</span>
+                        <strong>{{ currentOrder.details.length }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Unidades solicitadas</span>
+                        <strong>{{ formatQuantity(totalQuantity()) }}</strong>
+                    </div>
+                </div>
+            </section>
+
+            <p-divider />
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-box"></i>
+                    </div>
+
+                    <div class="section-heading-text">
+                        <h3>Productos solicitados</h3>
+                        <p>{{ currentOrder.details.length }} líneas registradas</p>
+                    </div>
+                </div>
+
+                <div class="products-list">
+                    @for (
+                        detail of currentOrder.details;
+                        track detail.purchase_order_detail_id;
+                        let i = $index
+                    ) {
+                        <article class="product-card">
+                            <div class="product-card-heading">
+                                <div class="product-number">
+                                    {{ i + 1 }}
+                                </div>
+
+                                <div class="product-information">
+                                    <strong>{{ getProductName(detail.product_id) }}</strong>
+                                    <span>{{ getProductSku(detail.product_id) }}</span>
+                                </div>
+
+                                <div class="product-total">
+                                    {{ formatCurrency(detail.total_amount) }}
+                                </div>
+                            </div>
+
+                            <div class="product-card-details">
+                                <div>
+                                    <span>Cantidad</span>
+                                    <strong>{{ formatQuantity(detail.quantity) }}</strong>
+                                </div>
+
+                                <div>
+                                    <span>Costo unitario</span>
+                                    <strong>{{ formatUnitCost(detail.unit_cost) }}</strong>
+                                </div>
+
+                                <div>
+                                    <span>Descuento</span>
+                                    <strong>{{ formatCurrency(detail.discount_amount) }}</strong>
+                                </div>
+
+                                <div>
+                                    <span>IVA</span>
+                                    <strong>{{ formatCurrency(detail.tax_amount) }}</strong>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </section>
+
+            <section class="totals-card">
+                <div class="totals-heading">
+                    <i class="pi pi-calculator"></i>
+                    <h3>Resumen financiero</h3>
+                </div>
+
+                <div class="total-row">
+                    <span>Subtotal</span>
+                    <strong>{{ formatCurrency(currentOrder.subtotal) }}</strong>
+                </div>
+
+                <div class="total-row">
+                    <span>IVA</span>
+                    <strong>{{ formatCurrency(currentOrder.tax_amount) }}</strong>
+                </div>
+
+                <div class="total-divider"></div>
+
+                <div class="grand-total">
+                    <span>Total de la orden</span>
+                    <strong>{{ formatCurrency(currentOrder.total_amount) }}</strong>
+                </div>
+            </section>
+
+            @if (currentOrder.notes) {
+                <section class="detail-section">
+                    <div class="section-heading">
+                        <div class="section-heading-icon">
+                            <i class="pi pi-align-left"></i>
+                        </div>
+
+                        <h3>Observaciones</h3>
+                    </div>
+
+                    <div class="notes-card">
+                        {{ currentOrder.notes }}
+                    </div>
+                </section>
+            }
+
+            <div class="order-audit">
+                <i class="pi pi-clock"></i>
+
+                <span>
+                    Última actualización:
+                    {{
+                        currentOrder.updated_at
+                            ? formatDate(currentOrder.updated_at)
+                            : 'Sin modificaciones'
+                    }}
+                </span>
+            </div>
+        </div>
+    }
+
+    <ng-template #footer>
+        <div class="drawer-footer">
+            <p-button
+                label="Cerrar"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="visible.set(false)"
+            />
+
+            @if (canCancelOrder()) {
+                <p-button
+                    label="Cancelar orden"
+                    icon="pi pi-times"
+                    severity="danger"
+                    [outlined]="true"
+                    [disabled]="processing()"
+                    (onClick)="onCancel()"
+                />
+            }
+
+            @if (canEditOrder()) {
+                <p-button
+                    label="Editar"
+                    icon="pi pi-pencil"
+                    severity="secondary"
+                    [outlined]="true"
+                    [disabled]="processing()"
+                    (onClick)="onEdit()"
+                />
+            }
+
+            @if (canApproveOrder()) {
+                <p-button
+                    label="Aprobar"
+                    icon="pi pi-check"
+                    severity="success"
+                    [loading]="processing()"
+                    (onClick)="onApprove()"
+                />
+            }
+        </div>
+    </ng-template>
+</p-drawer>

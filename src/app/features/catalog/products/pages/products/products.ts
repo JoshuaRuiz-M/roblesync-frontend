@@ -36,7 +36,12 @@ import { DataGrid } from '../../../../../shared/components/data-grid/components/
 import { FormDialog } from '../../../../../shared/components/form-dialog/form-dialog';
 
 import { ProductsService } from '../../services/products.service';
-import type { Product, CreateProduct, UpdateProduct } from '../../models/product.model';
+import type {
+    Product,
+    CreateProduct,
+    UpdateProduct,
+    ProductSupplierDetail,
+} from '../../models/product.model';
 
 import { BrandsService } from '../../../brands/services/brands.service';
 import type { Brand } from '../../../brands/models/brand.model';
@@ -50,10 +55,23 @@ import { ButtonModule } from 'primeng/button';
 import { UnitsOfMeasureService } from '../../../units-of-mesure/services/units-of-mesure.service';
 import { UnitOfMeasure } from '../../../units-of-mesure/models/unit-of-mesure.model';
 import { ProductDetails } from '../../components/product-details/product-details';
+import {
+    ProductSupplierForm,
+    ProductSupplierFormSave,
+} from '../../components/product-supplier-form/product-supplier-form';
+import { Supplier } from '../../../../purchasing/suppliers/models/supplier.model';
+import { SuppliersService } from '../../../../purchasing/suppliers/services/suppliers.service';
 
 @Component({
     selector: 'app-products',
-    imports: [DataGrid, FormDialog, ProductsForm, ButtonModule, ProductDetails],
+    imports: [
+        DataGrid,
+        FormDialog,
+        ProductsForm,
+        ButtonModule,
+        ProductDetails,
+        ProductSupplierForm,
+    ],
     templateUrl: './products.html',
     styleUrl: './products.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -96,6 +114,28 @@ export class Products {
 
     readonly detailsVisible = signal(false);
     readonly selectedDetailsProduct = signal<Product | null>(null);
+
+    private readonly suppliersService = inject(SuppliersService);
+
+    readonly supplierDialogVisible = signal(false);
+    readonly supplierSaving = signal(false);
+
+    readonly supplierProduct = signal<Product | null>(null);
+    readonly selectedSupplierAssociation = signal<ProductSupplierDetail | null>(null);
+
+    readonly supplierItems = signal<Supplier[]>([]);
+    readonly loadingSuppliers = signal(false);
+    readonly suppliersError = signal(false);
+    readonly suppliersRefreshKey = signal(0);
+    readonly associatedSupplierIds = signal<number[]>([]);
+
+    readonly canReadSuppliers = computed(() =>
+        this.authService.hasPermission('PRODUCT_SUPPLIER_READ'),
+    );
+
+    readonly canManageSuppliers = computed(() =>
+        this.authService.hasPermission('PRODUCT_SUPPLIER_MANAGE'),
+    );
 
     readonly canEditProduct = computed(() => this.authService.hasPermission('PRODUCT_UPDATE'));
 
@@ -478,6 +518,180 @@ export class Products {
                 this.unitItems.set(result.units);
 
                 this.catalogsReady.set(true);
+            });
+    }
+
+    onAssociateSupplier(product: Product): void {
+        if (!this.canManageSuppliers()) {
+            return;
+        }
+
+        this.detailsVisible.set(false);
+        this.supplierProduct.set(product);
+        this.selectedSupplierAssociation.set(null);
+
+        this.associatedSupplierIds.set([]);
+        this.supplierDialogVisible.set(true);
+
+        this.loadSuppliers();
+
+        this.productsService
+            .getSuppliers(product.product_id)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: (response) => {
+                    this.associatedSupplierIds.set(response.data.map((item) => item.supplier_id));
+                },
+                error: () => {
+                    this.toast.error(
+                        'Error al consultar asociaciones',
+                        'No fue posible comprobar los proveedores asociados.',
+                    );
+                },
+            });
+    }
+
+    onEditSupplier(event: { product: Product; supplier: ProductSupplierDetail }): void {
+        if (!this.canManageSuppliers()) {
+            return;
+        }
+
+        this.detailsVisible.set(false);
+
+        this.supplierProduct.set(event.product);
+        this.selectedSupplierAssociation.set(event.supplier);
+
+        this.supplierDialogVisible.set(true);
+    }
+
+    loadSuppliers(): void {
+        this.loadingSuppliers.set(true);
+        this.suppliersError.set(false);
+
+        this.getAllPages((params) => this.suppliersService.getAll(params))
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                finalize(() => this.loadingSuppliers.set(false)),
+            )
+            .subscribe({
+                next: (suppliers) => {
+                    this.supplierItems.set(suppliers);
+                },
+                error: () => {
+                    this.suppliersError.set(true);
+
+                    this.toast.error(
+                        'Error al cargar proveedores',
+                        'No fue posible obtener el catálogo de proveedores.',
+                    );
+                },
+            });
+    }
+
+    saveSupplierAssociation(event: ProductSupplierFormSave): void {
+        const product = this.supplierProduct();
+
+        if (!product || this.supplierSaving() || !this.canManageSuppliers()) {
+            return;
+        }
+
+        this.supplierSaving.set(true);
+
+        const request$ =
+            event.mode === 'create'
+                ? this.productsService.addSupplier(product.product_id, event.payload)
+                : this.productsService.updateSupplier(
+                      product.product_id,
+                      event.supplierId,
+                      event.payload,
+                  );
+
+        request$
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                finalize(() => this.supplierSaving.set(false)),
+            )
+            .subscribe({
+                next: () => {
+                    this.toast.success(
+                        'Operación exitosa',
+                        event.mode === 'create'
+                            ? 'El proveedor se asoció correctamente.'
+                            : 'La asociación se actualizó correctamente.',
+                    );
+
+                    this.supplierDialogVisible.set(false);
+                    this.selectedSupplierAssociation.set(null);
+                    this.supplierProduct.set(null);
+                },
+                error: () => {
+                    this.toast.error(
+                        'Error al guardar',
+                        'No fue posible guardar la asociación del proveedor.',
+                    );
+                },
+            });
+    }
+
+    onPreferredSupplier(event: { product: Product; supplier: ProductSupplierDetail }): void {
+        if (!this.canManageSuppliers()) {
+            return;
+        }
+
+        this.productsService
+            .setPreferredSupplier(event.product.product_id, event.supplier.supplier_id)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: () => {
+                    this.toast.success(
+                        'Proveedor preferido',
+                        'El proveedor preferido se actualizó correctamente.',
+                    );
+
+                    this.suppliersRefreshKey.update((value) => value + 1);
+                },
+                error: () => {
+                    this.toast.error(
+                        'Error al actualizar',
+                        'No fue posible establecer el proveedor preferido.',
+                    );
+                },
+            });
+    }
+
+    onRemoveSupplier(event: { product: Product; supplier: ProductSupplierDetail }): void {
+        if (!this.canManageSuppliers()) {
+            return;
+        }
+
+        this.confirmDialog.delete(
+            `¿Está seguro de que desea desasociar al proveedor "${event.supplier.business_name}" del producto "${event.product.name}"?`,
+            () => this.removeSupplierAssociation(event),
+        );
+    }
+
+    private removeSupplierAssociation(event: {
+        product: Product;
+        supplier: ProductSupplierDetail;
+    }): void {
+        this.productsService
+            .removeSupplier(event.product.product_id, event.supplier.supplier_id)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: () => {
+                    this.toast.success(
+                        'Proveedor desasociado',
+                        'El proveedor se desasoció correctamente.',
+                    );
+
+                    this.suppliersRefreshKey.update((value) => value + 1);
+                },
+                error: () => {
+                    this.toast.error(
+                        'Error al desasociar',
+                        'No fue posible desasociar al proveedor.',
+                    );
+                },
             });
     }
 

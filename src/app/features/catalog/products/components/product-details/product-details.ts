@@ -6,16 +6,25 @@ import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 
-import type { Product } from '../../models/product.model';
+import type { Product, ProductSupplierDetail } from '../../models/product.model';
 import type { Brand } from '../../../brands/models/brand.model';
 import type { ProductLine } from '../../../product-lines/models/product-line.model';
 
 import { ProductBarcode } from '../product-barcode/product-barcode';
 import { UnitOfMeasure } from '../../../units-of-mesure/models/unit-of-mesure.model';
+import { ProductSuppliers } from '../product-suppliers/product-suppliers';
 
 @Component({
     selector: 'app-product-details',
-    imports: [DatePipe, DecimalPipe, DrawerModule, ButtonModule, TagModule, ProductBarcode],
+    imports: [
+        DatePipe,
+        DecimalPipe,
+        DrawerModule,
+        ButtonModule,
+        TagModule,
+        ProductBarcode,
+        ProductSuppliers,
+    ],
     templateUrl: './product-details.html',
     styleUrl: './product-details.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +41,8 @@ export class ProductDetails {
 
     readonly canEdit = input(false);
     readonly edit = output<Product>();
+
+    readonly suppliersRefreshKey = input(0);
 
     readonly brandName = computed(() => {
         const product = this.product();
@@ -99,6 +110,37 @@ export class ProductDetails {
         maximumFractionDigits: 2,
     });
 
+    readonly canReadSuppliers = input(false);
+    readonly canManageSuppliers = input(false);
+
+    readonly associateSupplier = output<Product>();
+    readonly editSupplier = output<{
+        product: Product;
+        supplier: ProductSupplierDetail;
+    }>();
+
+    onAssociateSupplier(): void {
+        const product = this.product();
+
+        if (!product || !this.canManageSuppliers()) {
+            return;
+        }
+
+        this.close();
+        this.associateSupplier.emit(product);
+    }
+
+    onEditSupplier(supplier: ProductSupplierDetail): void {
+        const product = this.product();
+
+        if (!product || !this.canManageSuppliers()) {
+            return;
+        }
+
+        this.close();
+        this.editSupplier.emit({ product, supplier });
+    }
+
     formatCurrency(value: number): string {
         return this.currencyFormatter.format(Number(value));
     }
@@ -116,5 +158,35 @@ export class ProductDetails {
 
         this.close();
         this.edit.emit(product);
+    }
+
+    readonly preferredSupplier = output<{
+        product: Product;
+        supplier: ProductSupplierDetail;
+    }>();
+
+    readonly removeSupplier = output<{
+        product: Product;
+        supplier: ProductSupplierDetail;
+    }>();
+
+    onPreferredSupplier(supplier: ProductSupplierDetail): void {
+        const product = this.product();
+
+        if (!product || !this.canManageSuppliers()) {
+            return;
+        }
+
+        this.preferredSupplier.emit({ product, supplier });
+    }
+
+    onRemoveSupplier(supplier: ProductSupplierDetail): void {
+        const product = this.product();
+
+        if (!product || !this.canManageSuppliers()) {
+            return;
+        }
+
+        this.removeSupplier.emit({ product, supplier });
     }
 }
