@@ -133,6 +133,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'salespersons',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/sales/salespersons/salespersons.routes').then(
+                        (m) => m.SALESPERSONS_ROUTES,
+                    ),
+            },
+            {
                 path: 'forbidden',
                 title: 'Acceso denegado',
                 loadComponent: () =>

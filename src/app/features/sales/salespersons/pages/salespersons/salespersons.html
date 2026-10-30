@@ -1,0 +1,51 @@
+<section class="salespersons-page">
+    <header class="page-heading">
+        <div>
+            <h1>Vendedores</h1>
+            <p>Administre los vendedores del sistema.</p>
+        </div>
+    </header>
+
+    <app-data-grid
+        [data]="salespersons()"
+        [columns]="columns"
+        [pagination]="pagination()"
+        [config]="gridConfig()"
+        [actions]="actions()"
+        [loading]="loading()"
+        [error]="error()"
+        (queryChange)="onQueryChange($event)"
+        (refresh)="refresh()"
+        (create)="onCreate()"
+        (actionClick)="onAction($event)"
+    />
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving()"
+        saveLabel="Guardar"
+        (save)="saveSalesperson()"
+    >
+        @if (loadingUsers()) {
+            <p class="text-muted">Cargando usuarios...</p>
+        }
+
+        @if (usersError()) {
+            <div class="parent-error">
+                <p>No fue posible cargar los usuarios.</p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadingUsers()"
+                />
+            </div>
+        }
+
+        <app-salespersons-form [salesperson]="selectedSalesperson()" [userItems]="userItems()" />
+    </app-form-dialog>
+</section>
