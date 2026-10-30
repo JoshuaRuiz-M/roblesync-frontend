@@ -6,7 +6,15 @@ import { environment } from '../../../../../environments/environment';
 
 import { ApiResponse, PaginatedResponse } from '../../../../core/http/models/api-response.model';
 
-import { Product, CreateProduct, UpdateProduct } from '../models/product.model';
+import {
+    Product,
+    CreateProduct,
+    UpdateProduct,
+    ProductSupplier,
+    UpdateProductSupplier,
+    CreateProductSupplier,
+    ProductSupplierDetail,
+} from '../models/product.model';
 import { PaginationParams } from '../../../../core/http/models/pagination.model';
 
 @Injectable({
@@ -37,5 +45,51 @@ export class ProductsService {
 
     delete(unitId: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${unitId}`);
+    }
+
+    getSuppliers(productId: number): Observable<ApiResponse<ProductSupplierDetail[]>> {
+        return this.http.get<ApiResponse<ProductSupplierDetail[]>>(
+            `${this.apiUrl}/${productId}/suppliers`,
+        );
+    }
+
+    addSupplier(
+        productId: number,
+        payload: CreateProductSupplier,
+    ): Observable<ApiResponse<ProductSupplier>> {
+        return this.http.post<ApiResponse<ProductSupplier>>(
+            `${this.apiUrl}/${productId}/suppliers`,
+            payload,
+        );
+    }
+
+    updateSupplier(
+        productId: number,
+        supplierId: number,
+        payload: UpdateProductSupplier,
+    ): Observable<ApiResponse<ProductSupplier>> {
+        return this.http.patch<ApiResponse<ProductSupplier>>(
+            `${this.apiUrl}/${productId}/suppliers/${supplierId}`,
+            payload,
+        );
+    }
+
+    setPreferredSupplier(
+        productId: number,
+        supplierId: number,
+    ): Observable<ApiResponse<ProductSupplier>> {
+        return this.http.patch<ApiResponse<ProductSupplier>>(
+            `${this.apiUrl}/${productId}/suppliers/${supplierId}/preferred`,
+            {},
+        );
+    }
+
+    removeSupplier(
+        productId: number,
+        supplierId: number,
+    ): Observable<ApiResponse<ProductSupplier>> {
+        return this.http.delete<ApiResponse<ProductSupplier>>(
+            `${this.apiUrl}/${productId}/suppliers/${supplierId}`,
+        );
     }
 }

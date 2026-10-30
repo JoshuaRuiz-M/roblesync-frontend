@@ -1,0 +1,123 @@
+<div class="product-suppliers">
+    <div class="suppliers-heading">
+        <div class="heading-title">
+            <i class="pi pi-truck"></i>
+
+            <div>
+                <h3>Proveedores</h3>
+                <span>Proveedores asociados al producto</span>
+            </div>
+        </div>
+
+        @if (canManage()) {
+            <p-button icon="pi pi-plus" label="Asociar" size="small" (onClick)="onAssociate()" />
+        }
+    </div>
+
+    @if (loading()) {
+        <div class="suppliers-state">
+            <p-progressSpinner strokeWidth="4" [style]="{ width: '32px', height: '32px' }" />
+
+            <span>Cargando proveedores...</span>
+        </div>
+    } @else if (error()) {
+        <div class="suppliers-state">
+            <i class="pi pi-exclamation-circle error-icon"></i>
+
+            <strong>No se pudieron cargar los proveedores</strong>
+
+            <p-button
+                label="Reintentar"
+                icon="pi pi-refresh"
+                severity="secondary"
+                [outlined]="true"
+                size="small"
+                (onClick)="reload()"
+            />
+        </div>
+    } @else if (suppliers().length === 0) {
+        <div class="suppliers-state">
+            <i class="pi pi-truck empty-icon"></i>
+
+            <strong>Sin proveedores asociados</strong>
+            <span>Este producto todavía no tiene proveedores registrados.</span>
+
+            @if (canManage()) {
+                <p-button
+                    label="Asociar proveedor"
+                    icon="pi pi-plus"
+                    [outlined]="true"
+                    size="small"
+                    (onClick)="onAssociate()"
+                />
+            }
+        </div>
+    } @else {
+        <div class="suppliers-list">
+            @for (supplier of suppliers(); track supplier.product_supplier_id) {
+                <article
+                    class="supplier-card"
+                    [class.preferred]="supplier.is_preferred && supplier.is_active"
+                    [class.inactive]="!supplier.is_active"
+                >
+                    <div class="supplier-top">
+                        <div class="supplier-info">
+                            <strong>{{ supplier.business_name }}</strong>
+
+                            <span>NIT: {{ supplier.tax_id }}</span>
+                        </div>
+
+                        @if (supplier.is_preferred && supplier.is_active) {
+                            <p-tag
+                                value="Preferido"
+                                icon="pi pi-star-fill"
+                                severity="success"
+                                [rounded]="true"
+                            />
+                        }
+                    </div>
+
+                    <div class="supplier-bottom">
+                        <p-tag
+                            [value]="supplier.is_active ? 'Activo' : 'Inactivo'"
+                            [severity]="supplier.is_active ? 'success' : 'secondary'"
+                        />
+
+                        @if (canManage()) {
+                            <div class="supplier-actions">
+                                @if (supplier.is_active && !supplier.is_preferred) {
+                                    <p-button
+                                        icon="pi pi-star"
+                                        severity="secondary"
+                                        [text]="true"
+                                        [rounded]="true"
+                                        pTooltip="Establecer como preferido"
+                                        (onClick)="onSetPreferred(supplier)"
+                                    />
+                                }
+
+                                <p-button
+                                    icon="pi pi-pencil"
+                                    severity="secondary"
+                                    [text]="true"
+                                    [rounded]="true"
+                                    pTooltip="Editar asociación"
+                                    (onClick)="onEdit(supplier)"
+                                />
+
+                                <p-button
+                                    icon="pi pi-trash"
+                                    severity="danger"
+                                    [text]="true"
+                                    [rounded]="true"
+                                    pTooltip="Desasociar proveedor"
+                                    (onClick)="onRemove(supplier)"
+                                />
+                            </div>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,96 @@
+<p-dialog
+    [visible]="visible()"
+    (visibleChange)="visibleChange.emit($event)"
+    [modal]="true"
+    [closable]="!saving()"
+    [dismissableMask]="false"
+    [style]="{ width: 'min(460px, 95vw)' }"
+    [header]="isEditing() ? 'Editar proveedor asociado' : 'Asociar proveedor'"
+>
+    <form id="product-supplier-form" [formGroup]="form" (ngSubmit)="onSave()" class="supplier-form">
+        <div class="form-description">
+            <i class="pi pi-truck"></i>
+
+            <div>
+                <strong>{{ productName() }}</strong>
+                <span>
+                    {{
+                        isEditing()
+                            ? 'Actualiza la configuración del proveedor.'
+                            : 'Selecciona un proveedor para asociarlo al producto.'
+                    }}
+                </span>
+            </div>
+        </div>
+
+        <div class="form-field">
+            <label for="supplier_id">Proveedor *</label>
+
+            @if (isEditing()) {
+                <div class="readonly-supplier">
+                    {{ association()?.business_name }}
+                </div>
+            } @else {
+                <p-select
+                    inputId="supplier_id"
+                    formControlName="supplier_id"
+                    [options]="supplierOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccionar proveedor"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    [fluid]="true"
+                    [loading]="loadingSuppliers()"
+                    [disabled]="loadingSuppliers() || suppliersError()"
+                    appendTo="body"
+                />
+
+                @if (submitted() && form.controls.supplier_id.invalid) {
+                    <small class="field-error"> Debes seleccionar un proveedor. </small>
+                }
+            }
+        </div>
+
+        <div class="form-options">
+            <label class="option-row" for="is_preferred">
+                <p-checkbox formControlName="is_preferred" [binary]="true" inputId="is_preferred" />
+
+                <span>
+                    <strong>Proveedor preferido</strong>
+                    <small> Se utilizará como proveedor principal del producto. </small>
+                </span>
+            </label>
+
+            <label class="option-row" for="is_active">
+                <p-checkbox formControlName="is_active" [binary]="true" inputId="is_active" />
+
+                <span>
+                    <strong>Asociación activa</strong>
+                    <small> Permite mantener habilitada la relación. </small>
+                </span>
+            </label>
+        </div>
+    </form>
+
+    <ng-template #footer>
+        <div class="dialog-actions">
+            <p-button
+                label="Cancelar"
+                severity="secondary"
+                [outlined]="true"
+                [disabled]="saving()"
+                (onClick)="close()"
+            />
+
+            <p-button
+                [label]="isEditing() ? 'Guardar cambios' : 'Asociar proveedor'"
+                icon="pi pi-check"
+                [loading]="saving()"
+                [disabled]="!isEditing() && (loadingSuppliers() || suppliersError())"
+                (onClick)="onSave()"
+            />
+        </div>
+    </ng-template>
+</p-dialog>

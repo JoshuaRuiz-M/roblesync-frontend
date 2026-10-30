@@ -95,6 +95,26 @@
         [productLineItems]="productLineItems()"
         [unitItems]="unitItems()"
         [canEdit]="canEditProduct()"
+        [canReadSuppliers]="canReadSuppliers()"
+        [canManageSuppliers]="canManageSuppliers()"
         (edit)="onEditFromDetails($event)"
+        (associateSupplier)="onAssociateSupplier($event)"
+        (editSupplier)="onEditSupplier($event)"
+        [suppliersRefreshKey]="suppliersRefreshKey()"
+        (preferredSupplier)="onPreferredSupplier($event)"
+        (removeSupplier)="onRemoveSupplier($event)"
+    />
+
+    <!-- FORMULARIO ASOCIAR / EDITAR PROVEEDOR -->
+    <app-product-supplier-form
+        [(visible)]="supplierDialogVisible"
+        [productName]="supplierProduct()?.name ?? ''"
+        [association]="selectedSupplierAssociation()"
+        [suppliers]="supplierItems()"
+        [loadingSuppliers]="loadingSuppliers()"
+        [suppliersError]="suppliersError()"
+        [saving]="supplierSaving()"
+        [associatedSupplierIds]="associatedSupplierIds()"
+        (save)="saveSupplierAssociation($event)"
     />
 </section>

@@ -160,6 +160,21 @@
                 <app-product-barcode [value]="item.barcode" [productName]="item.name" />
             </section>
 
+            <!-- PROVEEDORES -->
+            @if (canReadSuppliers()) {
+                <section class="details-section">
+                    <app-product-suppliers
+                        [productId]="item.product_id"
+                        [canManage]="canManageSuppliers()"
+                        [refreshKey]="suppliersRefreshKey()"
+                        (associate)="onAssociateSupplier()"
+                        (edit)="onEditSupplier($event)"
+                        (preferred)="onPreferredSupplier($event)"
+                        (remove)="onRemoveSupplier($event)"
+                    />
+                </section>
+            }
+
             <!-- AUDITORÍA -->
             <section class="details-section">
                 <div class="section-heading">
