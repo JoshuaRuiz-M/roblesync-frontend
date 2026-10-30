@@ -1,0 +1,73 @@
+<section class="customers-page">
+    <header class="page-heading">
+        <div>
+            <h1>Clientes</h1>
+            <p>Administre los clientes del sistema.</p>
+        </div>
+    </header>
+
+    <app-data-grid
+        [data]="customers()"
+        [columns]="columns"
+        [pagination]="pagination()"
+        [config]="gridConfig()"
+        [actions]="actions()"
+        [loading]="loading()"
+        [error]="error()"
+        (queryChange)="onQueryChange($event)"
+        (refresh)="refresh()"
+        (create)="onCreate()"
+        (actionClick)="onAction($event)"
+    />
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving()"
+        saveLabel="Guardar"
+        (save)="saveCustomer()"
+    >
+        @if (loadingSalespersons()) {
+            <p class="text-muted">Cargando vendedores...</p>
+        }
+
+        @if (salespersonError()) {
+            <div class="parent-error">
+                <p>No fue posible cargar los vendedores.</p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadingSalespersons()"
+                />
+            </div>
+        }
+
+        @if (loadingPriceLists()) {
+            <p class="text-muted">Cargando listas de precios...</p>
+        }
+
+        @if (priceListError()) {
+            <div class="parent-error">
+                <p>No fue posible cargar las listas de precios.</p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadingPriceLists()"
+                />
+            </div>
+        }
+
+        <app-customers-form
+            [customer]="selectedCustomer()"
+            [salepersonItems]="salespersonItems()"
+            [priceListItems]="priceListItems()"
+        />
+    </app-form-dialog>
+</section>

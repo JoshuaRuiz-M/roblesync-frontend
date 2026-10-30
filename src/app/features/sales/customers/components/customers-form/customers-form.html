@@ -153,8 +153,8 @@
 
         <p-select
             inputId="list-prices"
-            formControlName="list_price_id"
-            [options]="priceListItems()"
+            formControlName="price_list_id"
+            [options]="priceListOption()"
             optionLabel="label"
             optionValue="value"
             placeholder="Seleccione una lista de precios"
@@ -172,12 +172,14 @@
     <div class="form-field">
         <label for=" credit_days"> Días de crédito </label>
 
-        <input
-            pInputText
+        <p-inputnumber
             id="credit_days"
             formControlName="credit_days"
+            [min]="0"
+            [max]="365"
+            [useGrouping]="false"
             placeholder="Ingrese los días de crédito del cliente"
-            fluid
+            styleClass="w-full"
         />
 
         @if (getFieldError('credit_days'); as error) {
@@ -188,12 +190,15 @@
     <div class="form-field">
         <label for="credit_limit"> Límite de crédito </label>
 
-        <input
-            pInputText
+        <p-inputnumber
             id="credit_limit"
             formControlName="credit_limit"
+            [min]="0.001"
+            [minFractionDigits]="0"
+            [maxFractionDigits]="3"
+            [useGrouping]="false"
             placeholder="Ingrese el límite de crédito del cliente"
-            fluid
+            styleClass="w-full"
         />
 
         @if (getFieldError('credit_limit'); as error) {

@@ -165,11 +165,27 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'warehouse-transfers',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/logistics/warehouse-transfers/warehouse-transfers.routes').then(
+                        (m) => m.WAREHOUSE_TRANSFERS_ROUTES,
+                    ),
+            },
+            {
                 path: 'sales-targets',
                 canActivate: [menuGuard],
                 loadChildren: () =>
                     import('../features/sales/sales-targets/sales-targets.routes').then(
                         (m) => m.SALES_TARGETS_ROUTES,
+                    ),
+            },
+            {
+                path: 'customers',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/sales/customers/customers.routes').then(
+                        (m) => m.CUSTOMERS_ROUTES,
                     ),
             },
             {

@@ -1,0 +1,230 @@
+<form class="warehouse-transfer-form" [formGroup]="form">
+    <section class="form-section">
+        <div class="section-heading">
+            <div class="section-icon">
+                <i class="pi pi-building"></i>
+            </div>
+
+            <div>
+                <h3>Información de la transferencia</h3>
+                <p>Seleccione las bodegas de origen y destino.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-field">
+                <label for="sourceWarehouse">
+                    Bodega de origen
+                    <span class="required">*</span>
+                </label>
+
+                <p-select
+                    inputId="sourceWarehouse"
+                    formControlName="source_warehouse_id"
+                    [options]="warehouses()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione la bodega de origen"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    appendTo="body"
+                    styleClass="w-full"
+                />
+
+                @if (isInvalid(form.controls.source_warehouse_id)) {
+                    <small class="field-error"> Seleccione una bodega de origen. </small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="destinationWarehouse">
+                    Bodega de destino
+                    <span class="required">*</span>
+                </label>
+
+                <p-select
+                    inputId="destinationWarehouse"
+                    formControlName="destination_warehouse_id"
+                    [options]="warehouses()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione la bodega de destino"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    appendTo="body"
+                    styleClass="w-full"
+                />
+
+                @if (isInvalid(form.controls.destination_warehouse_id)) {
+                    <small class="field-error"> Seleccione una bodega de destino. </small>
+                }
+            </div>
+
+            @if (form.hasError('sameWarehouse') && (form.dirty || form.touched)) {
+                <div class="form-error">
+                    <p-message severity="error">
+                        La bodega de origen y destino deben ser diferentes.
+                    </p-message>
+                </div>
+            }
+
+            <div class="form-field notes-field">
+                <label for="notes"> Observaciones </label>
+
+                <textarea
+                    pTextarea
+                    id="notes"
+                    formControlName="notes"
+                    rows="3"
+                    maxlength="500"
+                    placeholder="Ingrese observaciones de la transferencia..."
+                    class="w-full"
+                ></textarea>
+
+                <div class="field-footer">
+                    <span class="character-count"> {{ notesLength }}/500 caracteres </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <div class="section-heading details-heading">
+            <div class="section-heading-content">
+                <div class="section-icon">
+                    <i class="pi pi-box"></i>
+                </div>
+
+                <div>
+                    <h3>Productos a transferir</h3>
+                    <p>Seleccione los productos, lotes y cantidades.</p>
+                </div>
+            </div>
+
+            <p-button
+                label="Agregar producto"
+                icon="pi pi-plus"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="addDetail()"
+            />
+        </div>
+
+        <div class="details-table-wrapper">
+            <table class="details-table">
+                <thead>
+                    <tr>
+                        <th class="number-column">#</th>
+                        <th class="product-column">Producto</th>
+                        <th class="batch-column">Lote</th>
+                        <th class="quantity-column">Cantidad</th>
+                        <th class="action-column"></th>
+                    </tr>
+                </thead>
+
+                <tbody formArrayName="details">
+                    @for (detail of details.controls; track detail; let i = $index) {
+                        <tr [formGroupName]="i">
+                            <td class="number-cell">
+                                <span class="row-number">
+                                    {{ i + 1 }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="detail-field">
+                                    <p-select
+                                        formControlName="product_id"
+                                        [options]="products()"
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        placeholder="Seleccione un producto"
+                                        [filter]="true"
+                                        filterBy="label"
+                                        [showClear]="true"
+                                        appendTo="body"
+                                        styleClass="w-full"
+                                        (onChange)="onProductChange(i)"
+                                    />
+
+                                    @if (isInvalid(detail.controls.product_id)) {
+                                        <small class="field-error"> Seleccione un producto. </small>
+                                    }
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="detail-field">
+                                    <p-select
+                                        formControlName="batch_id"
+                                        [options]="
+                                            getBatchesForProduct(detail.controls.product_id.value)
+                                        "
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        placeholder="Seleccione un lote"
+                                        [filter]="true"
+                                        filterBy="label"
+                                        [showClear]="true"
+                                        appendTo="body"
+                                        styleClass="w-full"
+                                    />
+
+                                    @if (isInvalid(detail.controls.batch_id)) {
+                                        <small class="field-error"> Seleccione un lote. </small>
+                                    }
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="detail-field">
+                                    <p-inputnumber
+                                        formControlName="quantity"
+                                        [min]="0.001"
+                                        [minFractionDigits]="0"
+                                        [maxFractionDigits]="3"
+                                        [useGrouping]="false"
+                                        placeholder="Cantidad"
+                                        styleClass="w-full"
+                                    />
+
+                                    @if (isInvalid(detail.controls.quantity)) {
+                                        <small class="field-error">
+                                            Ingrese una cantidad válida.
+                                        </small>
+                                    }
+                                </div>
+                            </td>
+
+                            <td class="action-cell">
+                                <p-button
+                                    icon="pi pi-trash"
+                                    severity="danger"
+                                    [text]="true"
+                                    [rounded]="true"
+                                    [disabled]="details.length === 1"
+                                    (onClick)="removeDetail(i)"
+                                />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (duplicateBatches && (form.dirty || form.touched)) {
+            <p-message severity="error"> No puede agregar el mismo lote más de una vez. </p-message>
+        }
+
+        <div class="details-footer">
+            <span>
+                <i class="pi pi-info-circle"></i>
+                Los costos se calcularán automáticamente al despachar.
+            </span>
+
+            <strong> {{ details.length }} líneas registradas </strong>
+        </div>
+    </section>
+</form>

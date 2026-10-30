@@ -1,0 +1,105 @@
+<section class="warehouse-transfers-page">
+    <header class="page-heading">
+        <div class="page-heading-content">
+            <div class="page-heading-icon">
+                <i class="pi pi-truck"></i>
+            </div>
+
+            <div class="page-heading-text">
+                <h1>Transferencias entre bodegas</h1>
+                <p>
+                    Administre los traslados de productos, despachos, recepciones y movimientos de
+                    inventario entre bodegas.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <div class="warehouse-transfers-content">
+        <app-data-grid
+            [data]="transfers()"
+            [columns]="columns"
+            [pagination]="pagination()"
+            [config]="gridConfig()"
+            [actions]="actions()"
+            [loading]="loading()"
+            [error]="error()"
+            (queryChange)="onQueryChange($event)"
+            (refresh)="refresh()"
+            (create)="onCreate()"
+            (actionClick)="onAction($event)"
+        />
+    </div>
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving() || !catalogsReady()"
+        saveLabel="Guardar transferencia"
+        (save)="saveTransfer()"
+        width="90vw"
+    >
+        @if (loadingCatalogs()) {
+            <div class="catalog-loading">
+                <i class="pi pi-spin pi-spinner"></i>
+
+                <div>
+                    <strong>Cargando información</strong>
+                    <p>
+                        Obteniendo bodegas, productos y lotes disponibles para la transferencia...
+                    </p>
+                </div>
+            </div>
+        }
+
+        @if (catalogsError()) {
+            <div class="catalog-error">
+                <div class="catalog-error-icon">
+                    <i class="pi pi-exclamation-triangle"></i>
+                </div>
+
+                <h3>No se pudo cargar la información</h3>
+
+                <p>
+                    Ocurrió un problema al obtener los catálogos necesarios para registrar la
+                    transferencia entre bodegas.
+                </p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadCatalogs()"
+                />
+            </div>
+        }
+
+        @if (catalogsReady()) {
+            <app-warehouse-transfers-form
+                [transfer]="selectedTransfer()"
+                [warehouses]="warehouseItems()"
+                [products]="productItems()"
+                [batches]="batchItems()"
+            />
+        }
+    </app-form-dialog>
+
+    <app-warehouse-transfer-details
+        [(visible)]="detailsVisible"
+        [transfer]="selectedDetailsTransfer()"
+        [warehouses]="warehouseItems()"
+        [products]="productItems()"
+        [batches]="batchItems()"
+        [canEdit]="canEdit()"
+        [canDispatch]="canDispatch()"
+        [canReceive]="canReceive()"
+        [canCancel]="canCancel()"
+        [processing]="processingTransferId() !== null"
+        (edit)="onEditFromDetails($event)"
+        (dispatch)="onDetailsOperation($event, 'dispatch')"
+        (receive)="onDetailsOperation($event, 'receive')"
+        (cancel)="onDetailsOperation($event, 'cancel')"
+    />
+</section>

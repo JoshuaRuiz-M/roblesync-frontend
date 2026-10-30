@@ -66,7 +66,6 @@ export class CustomersForm {
 
     readonly priceListOption = computed<PriceListOption[]>(() => {
         const items = this.priceListItems();
-
         return items.map((item) => ({
             label: item.name,
             value: item.price_list_id,

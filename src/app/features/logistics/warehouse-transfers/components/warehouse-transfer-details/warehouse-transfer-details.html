@@ -1,0 +1,313 @@
+<p-drawer [(visible)]="visible" position="right" styleClass="warehouse-transfer-details-drawer">
+    <ng-template #header>
+        <div class="drawer-heading">
+            <div class="drawer-heading-icon">
+                <i class="pi pi-truck"></i>
+            </div>
+
+            <div class="drawer-heading-text">
+                <h2>Detalle de transferencia</h2>
+                <span>Información y seguimiento del traslado</span>
+            </div>
+        </div>
+    </ng-template>
+
+    @if (transfer(); as item) {
+        <div class="transfer-details">
+            <section class="transfer-hero">
+                <div class="transfer-hero-top">
+                    <div class="transfer-hero-icon">
+                        <i class="pi pi-send"></i>
+                    </div>
+
+                    <p-tag
+                        [value]="getStatusLabel(item.status)"
+                        [severity]="getStatusSeverity(item.status)"
+                    />
+                </div>
+
+                <div class="transfer-hero-content">
+                    <span class="eyebrow">Transferencia</span>
+
+                    <h3>{{ item.transfer_number }}</h3>
+
+                    <p>
+                        Registrada el
+                        {{ item.transfer_date | date: 'dd/MM/yyyy HH:mm' }}
+                    </p>
+                </div>
+
+                <div class="transfer-hero-summary">
+                    <div>
+                        <span>Productos registrados</span>
+                        <strong>{{ item.details.length }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Cantidad total</span>
+                        <strong>
+                            {{ totalQuantity() | number: '1.0-3' }}
+                        </strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-building"></i>
+                    </div>
+
+                    <div class="section-heading-text">
+                        <h3>Origen y destino</h3>
+                        <p>Bodegas involucradas en el traslado</p>
+                    </div>
+                </div>
+
+                <div class="warehouse-route">
+                    <div class="warehouse-card">
+                        <div class="warehouse-card-icon">
+                            <i class="pi pi-box"></i>
+                        </div>
+
+                        <div class="warehouse-card-content">
+                            <span>Bodega de origen</span>
+                            <strong>
+                                {{ getWarehouseName(item.source_warehouse_id) }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="route-arrow">
+                        <i class="pi pi-arrow-down"></i>
+                    </div>
+
+                    <div class="warehouse-card">
+                        <div class="warehouse-card-icon">
+                            <i class="pi pi-map-marker"></i>
+                        </div>
+
+                        <div class="warehouse-card-content">
+                            <span>Bodega de destino</span>
+                            <strong>
+                                {{ getWarehouseName(item.destination_warehouse_id) }}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-calendar"></i>
+                    </div>
+
+                    <div class="section-heading-text">
+                        <h3>Seguimiento</h3>
+                        <p>Fechas y responsables de la transferencia</p>
+                    </div>
+                </div>
+
+                <div class="information-grid">
+                    <div class="information-item">
+                        <span>Fecha de transferencia</span>
+                        <strong>
+                            {{ item.transfer_date | date: 'dd/MM/yyyy HH:mm' }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Estado actual</span>
+                        <strong>{{ getStatusLabel(item.status) }}</strong>
+                    </div>
+
+                    @if (item.dispatched_at) {
+                        <div class="information-item">
+                            <span>Fecha de despacho</span>
+                            <strong>
+                                {{ item.dispatched_at | date: 'dd/MM/yyyy HH:mm' }}
+                            </strong>
+                        </div>
+
+                        <div class="information-item">
+                            <span>Despachado por</span>
+                            <strong> Usuario #{{ item.dispatched_by }} </strong>
+                        </div>
+                    }
+
+                    @if (item.received_at) {
+                        <div class="information-item">
+                            <span>Fecha de recepción</span>
+                            <strong>
+                                {{ item.received_at | date: 'dd/MM/yyyy HH:mm' }}
+                            </strong>
+                        </div>
+
+                        <div class="information-item">
+                            <span>Recibido por</span>
+                            <strong> Usuario #{{ item.received_by }} </strong>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-list"></i>
+                    </div>
+
+                    <div class="section-heading-text">
+                        <h3>Productos transferidos</h3>
+                        <p>Detalle de productos, lotes y cantidades</p>
+                    </div>
+                </div>
+
+                <div class="products-list">
+                    @for (
+                        detail of item.details;
+                        track detail.warehouse_transfer_detail_id;
+                        let i = $index
+                    ) {
+                        <div class="product-card">
+                            <div class="product-card-heading">
+                                <span class="product-number">
+                                    {{ i + 1 }}
+                                </span>
+
+                                <div class="product-information">
+                                    <strong>
+                                        {{ getProductName(detail.product_id) }}
+                                    </strong>
+
+                                    <span>
+                                        {{ getBatchName(detail.batch_id) }}
+                                    </span>
+                                </div>
+
+                                @if (item.status !== 'DRAFT') {
+                                    <span class="product-total">
+                                        Q
+                                        {{ detail.quantity * detail.unit_cost | number: '1.2-4' }}
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="product-card-details">
+                                <div>
+                                    <span>Cantidad</span>
+                                    <strong>
+                                        {{ detail.quantity | number: '1.0-3' }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Costo unitario</span>
+                                    <strong>
+                                        @if (item.status !== 'DRAFT') {
+                                            Q
+                                            {{ detail.unit_cost | number: '1.2-4' }}
+                                        } @else {
+                                            Pendiente
+                                        }
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            @if (item.status !== 'DRAFT' && item.status !== 'CANCELLED') {
+                <section class="totals-card">
+                    <div class="totals-heading">
+                        <i class="pi pi-calculator"></i>
+                        <h3>Valorización de la transferencia</h3>
+                    </div>
+
+                    <div class="grand-total">
+                        <span>Valor total estimado</span>
+                        <strong> Q {{ totalCost() | number: '1.2-4' }} </strong>
+                    </div>
+                </section>
+            }
+
+            @if (item.notes) {
+                <section class="detail-section">
+                    <div class="section-heading">
+                        <div class="section-heading-icon">
+                            <i class="pi pi-file-edit"></i>
+                        </div>
+
+                        <div class="section-heading-text">
+                            <h3>Observaciones</h3>
+                        </div>
+                    </div>
+
+                    <div class="notes-card">
+                        {{ item.notes }}
+                    </div>
+                </section>
+            }
+
+            <div class="transfer-audit">
+                <i class="pi pi-clock"></i>
+                <span>
+                    Creada el
+                    {{ item.created_at | date: 'dd/MM/yyyy HH:mm' }}
+                    por el usuario #{{ item.created_by }}
+                </span>
+            </div>
+        </div>
+    }
+
+    <ng-template #footer>
+        <div class="drawer-footer">
+            @if (transfer(); as item) {
+                @if (isDraft()) {
+                    @if (canCancel()) {
+                        <p-button
+                            label="Cancelar"
+                            icon="pi pi-times"
+                            severity="danger"
+                            [outlined]="true"
+                            [disabled]="processing()"
+                            (onClick)="onCancel()"
+                        />
+                    }
+
+                    @if (canEdit()) {
+                        <p-button
+                            label="Editar"
+                            icon="pi pi-pencil"
+                            severity="secondary"
+                            [outlined]="true"
+                            [disabled]="processing()"
+                            (onClick)="onEdit()"
+                        />
+                    }
+
+                    @if (canDispatch()) {
+                        <p-button
+                            label="Despachar"
+                            icon="pi pi-send"
+                            [loading]="processing()"
+                            (onClick)="onDispatch()"
+                        />
+                    }
+                }
+
+                @if (isInTransit() && canReceive()) {
+                    <p-button
+                        label="Recibir transferencia"
+                        icon="pi pi-check"
+                        severity="success"
+                        [loading]="processing()"
+                        (onClick)="onReceive()"
+                    />
+                }
+            }
+        </div>
+    </ng-template>
+</p-drawer>
