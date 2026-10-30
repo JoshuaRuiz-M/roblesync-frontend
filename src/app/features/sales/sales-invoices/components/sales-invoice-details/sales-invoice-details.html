@@ -1,0 +1,268 @@
+<p-drawer [(visible)]="visible" position="right" styleClass="sales-invoice-details-drawer">
+    <ng-template #header>
+        <div class="drawer-heading">
+            <div class="drawer-heading-icon">
+                <i class="pi pi-file"></i>
+            </div>
+
+            <div class="drawer-heading-text">
+                <h2>Detalle de factura</h2>
+                <span>Información de la factura de venta</span>
+            </div>
+        </div>
+    </ng-template>
+
+    @if (invoice(); as invoice) {
+        <div class="invoice-details">
+            <section class="invoice-hero">
+                <div class="invoice-hero-top">
+                    <div class="invoice-hero-icon">
+                        <i class="pi pi-file"></i>
+                    </div>
+
+                    <p-tag
+                        [value]="status().label"
+                        [severity]="status().severity"
+                        [icon]="status().icon"
+                    />
+                </div>
+
+                <div class="invoice-hero-content">
+                    <span class="eyebrow">Factura de venta</span>
+
+                    <h3>{{ invoice.invoice_series }}-{{ invoice.invoice_number }}</h3>
+
+                    <p>Emitida el {{ formatDateTime(invoice.invoice_date) }}</p>
+                </div>
+
+                <div class="invoice-hero-total">
+                    <span>Total facturado</span>
+                    <strong>{{ formatCurrency(invoice.total_amount) }}</strong>
+                </div>
+            </section>
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-info-circle"></i>
+                    </div>
+
+                    <div class="section-heading-text">
+                        <h3>Información general</h3>
+                        <p>Datos principales de la factura.</p>
+                    </div>
+                </div>
+
+                <div class="information-grid">
+                    <div class="information-item">
+                        <span>Orden de venta</span>
+                        <strong>
+                            {{ order()?.order_number ?? '#' + invoice.sales_order_id }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Cliente</span>
+                        <strong>Cliente #{{ invoice.customer_id }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Vendedor</span>
+                        <strong>Vendedor #{{ invoice.salesperson_id }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Fecha de emisión</span>
+                        <strong>{{ formatDateTime(invoice.invoice_date) }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Fecha de vencimiento</span>
+                        <strong>{{ formatDate(invoice.due_date) }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>UUID DTE</span>
+                        <strong>{{ invoice.dte_uuid ?? 'No registrado' }}</strong>
+                    </div>
+                </div>
+            </section>
+
+            <p-divider />
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-box"></i>
+                    </div>
+
+                    <div class="section-heading-text">
+                        <h3>Productos facturados</h3>
+                        <p>{{ invoice.details.length }} productos registrados.</p>
+                    </div>
+                </div>
+
+                <div class="products-list">
+                    @for (
+                        detail of invoice.details;
+                        track detail.sales_invoice_detail_id;
+                        let i = $index
+                    ) {
+                        <div class="product-card">
+                            <div class="product-card-heading">
+                                <span class="product-number">{{ i + 1 }}</span>
+
+                                <div class="product-information">
+                                    <strong>
+                                        {{ getProductName(detail.product_id) }}
+                                    </strong>
+
+                                    <span>
+                                        {{ getProductSku(detail.product_id) }}
+                                    </span>
+                                </div>
+
+                                <strong class="product-total">
+                                    {{ formatCurrency(detail.total_amount) }}
+                                </strong>
+                            </div>
+
+                            <div class="product-card-details">
+                                <div>
+                                    <span>Cantidad</span>
+                                    <strong>
+                                        {{ formatQuantity(detail.quantity) }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Precio unitario</span>
+                                    <strong>
+                                        {{ formatUnitPrice(detail.unit_price) }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Descuento</span>
+                                    <strong>
+                                        {{ formatCurrency(detail.discount_amount) }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Impuesto</span>
+                                    <strong>
+                                        {{ formatCurrency(detail.tax_amount) }}
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="products-summary">
+                    <i class="pi pi-box"></i>
+                    <span>
+                        Cantidad total:
+                        <strong>{{ formatQuantity(totalQuantity()) }}</strong>
+                    </span>
+                </div>
+            </section>
+
+            <p-divider />
+
+            <section class="totals-card">
+                <div class="totals-heading">
+                    <i class="pi pi-calculator"></i>
+                    <h3>Resumen de facturación</h3>
+                </div>
+
+                <div class="total-row">
+                    <span>Subtotal</span>
+                    <strong>{{ formatCurrency(invoice.subtotal) }}</strong>
+                </div>
+
+                <div class="total-row">
+                    <span>Descuentos</span>
+                    <strong>- {{ formatCurrency(invoice.discount_amount) }}</strong>
+                </div>
+
+                <div class="total-row">
+                    <span>Impuestos</span>
+                    <strong>{{ formatCurrency(invoice.tax_amount) }}</strong>
+                </div>
+
+                <div class="total-divider"></div>
+
+                <div class="grand-total">
+                    <span>Total</span>
+                    <strong>{{ formatCurrency(invoice.total_amount) }}</strong>
+                </div>
+            </section>
+
+            @if (invoice.status === 'CANCELLED') {
+                <section class="detail-section">
+                    <div class="section-heading">
+                        <div class="section-heading-icon cancellation-icon">
+                            <i class="pi pi-ban"></i>
+                        </div>
+
+                        <div class="section-heading-text">
+                            <h3>Información de cancelación</h3>
+                            <p>Esta factura fue cancelada.</p>
+                        </div>
+                    </div>
+
+                    <div class="cancellation-card">
+                        <div class="information-item">
+                            <span>Motivo de cancelación</span>
+                            <strong>
+                                {{ invoice.cancellation_reason ?? 'No registrado' }}
+                            </strong>
+                        </div>
+
+                        <div class="information-item">
+                            <span>Fecha de cancelación</span>
+                            <strong>
+                                {{ formatDateTime(invoice.cancelled_at) }}
+                            </strong>
+                        </div>
+
+                        <div class="information-item">
+                            <span>Cancelada por</span>
+                            <strong> Usuario #{{ invoice.cancelled_by }} </strong>
+                        </div>
+                    </div>
+                </section>
+            }
+
+            <div class="invoice-audit">
+                <i class="pi pi-clock"></i>
+                <span> Registrada el {{ formatDateTime(invoice.created_at) }} </span>
+            </div>
+        </div>
+    }
+
+    <ng-template #footer>
+        <div class="drawer-footer">
+            <p-button
+                label="Cerrar"
+                icon="pi pi-times"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="visible.set(false)"
+            />
+
+            @if (canCancelInvoice()) {
+                <p-button
+                    label="Cancelar factura"
+                    icon="pi pi-ban"
+                    severity="danger"
+                    [loading]="processing()"
+                    [disabled]="processing()"
+                    (onClick)="onCancel()"
+                />
+            }
+        </div>
+    </ng-template>
+</p-drawer>

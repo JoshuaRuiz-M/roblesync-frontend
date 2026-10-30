@@ -1,0 +1,159 @@
+<section class="sales-invoices-page">
+    <header class="page-heading">
+        <div class="page-heading-content">
+            <div class="page-heading-icon">
+                <i class="pi pi-file"></i>
+            </div>
+
+            <div class="page-heading-text">
+                <h1>Facturas de venta</h1>
+                <p>Administre la emisión, consulta y cancelación de facturas de venta.</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="sales-invoices-content">
+        <app-data-grid
+            [data]="invoices()"
+            [columns]="columns"
+            [pagination]="pagination()"
+            [config]="gridConfig()"
+            [actions]="actions()"
+            [loading]="loading()"
+            [error]="error()"
+            (queryChange)="onQueryChange($event)"
+            (refresh)="refresh()"
+            (create)="onCreate()"
+            (actionClick)="onAction($event)"
+        />
+    </div>
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving() || !catalogsReady()"
+        saveLabel="Emitir factura"
+        (save)="saveInvoice()"
+        width="95vw"
+    >
+        @if (loadingCatalogs()) {
+            <div class="catalog-loading">
+                <i class="pi pi-spin pi-spinner"></i>
+
+                <div>
+                    <strong>Cargando información</strong>
+                    <p>
+                        Obteniendo órdenes de venta reservadas, clientes y productos disponibles...
+                    </p>
+                </div>
+            </div>
+        }
+
+        @if (catalogsError()) {
+            <div class="catalog-error">
+                <div class="catalog-error-icon">
+                    <i class="pi pi-exclamation-triangle"></i>
+                </div>
+
+                <h3>No se pudo cargar la información</h3>
+
+                <p>
+                    Ocurrió un problema al obtener los datos necesarios para emitir la factura de
+                    venta.
+                </p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadCatalogs()"
+                />
+            </div>
+        }
+
+        @if (catalogsReady()) {
+            <app-sales-invoices-form [orders]="reservedOrders()" [products]="products()" />
+        }
+    </app-form-dialog>
+
+    <app-sales-invoice-details
+        [(visible)]="detailsVisible"
+        [invoice]="selectedDetailsInvoice()"
+        [orders]="salesOrders()"
+        [customers]="customers()"
+        [products]="products()"
+        [canCancel]="canCancel()"
+        [processing]="processingInvoiceId() !== null"
+        (cancel)="onCancel($event)"
+    />
+
+    <p-dialog
+        header="Cancelar factura de venta"
+        [(visible)]="cancelDialogVisible"
+        [modal]="true"
+        [closable]="!cancelling()"
+        [dismissableMask]="false"
+        [style]="{ width: 'min(95vw, 480px)' }"
+    >
+        <div class="cancel-dialog-content">
+            @if (selectedCancelInvoice(); as invoice) {
+                <p>
+                    Está a punto de cancelar la factura
+                    <strong> {{ invoice.invoice_series }}-{{ invoice.invoice_number }} </strong>.
+                    Para continuar, debe proporcionar un motivo de cancelación.
+                </p>
+            }
+
+            <div class="cancel-field">
+                <label for="cancellation-reason">
+                    Motivo de cancelación
+                    <span class="required">*</span>
+                </label>
+
+                <textarea
+                    pTextarea
+                    id="cancellation-reason"
+                    [ngModel]="cancellationReason()"
+                    (ngModelChange)="cancellationReason.set($event)"
+                    rows="4"
+                    maxlength="500"
+                    placeholder="Ingrese el motivo de cancelación..."
+                    class="w-full"
+                ></textarea>
+
+                <small> {{ cancellationReason().length }}/500 caracteres </small>
+            </div>
+
+            <p-message severity="warn">
+                Esta acción no se puede deshacer. La cancelación de la factura no devolverá
+                automáticamente los productos al inventario.
+            </p-message>
+        </div>
+
+        <ng-template #footer>
+            <p-button
+                label="Volver"
+                icon="pi pi-arrow-left"
+                severity="secondary"
+                [outlined]="true"
+                [disabled]="cancelling()"
+                (onClick)="cancelDialogVisible.set(false)"
+            />
+
+            <p-button
+                label="Confirmar cancelación"
+                icon="pi pi-ban"
+                severity="danger"
+                [loading]="cancelling()"
+                [disabled]="
+                    cancelling() ||
+                    !cancellationReason().trim() ||
+                    cancellationReason().trim().length > 500
+                "
+                (onClick)="confirmCancellation()"
+            />
+        </ng-template>
+    </p-dialog>
+</section>

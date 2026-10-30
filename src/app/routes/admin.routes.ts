@@ -157,6 +157,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'sales-invoices',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/sales/sales-invoices/sales-invoices.routes').then(
+                        (m) => m.SALES_INVOICES_ROUTES,
+                    ),
+            },
+            {
                 path: 'forbidden',
                 title: 'Acceso denegado',
                 loadComponent: () =>

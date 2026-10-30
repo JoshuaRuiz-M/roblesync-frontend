@@ -1,0 +1,194 @@
+<form class="sales-invoice-form" [formGroup]="form">
+    <section class="form-section">
+        <div class="section-heading">
+            <div class="section-icon">
+                <i class="pi pi-file"></i>
+            </div>
+
+            <div>
+                <h3>Información de la factura</h3>
+                <p>Seleccione una orden reservada e ingrese los datos de facturación.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-field full-width">
+                <label for="sales-order"> Orden de venta <span class="required">*</span> </label>
+
+                <p-select
+                    inputId="sales-order"
+                    formControlName="sales_order_id"
+                    [options]="orderOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione una orden reservada"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    appendTo="body"
+                    styleClass="w-full"
+                    (onChange)="onOrderChange($event.value)"
+                />
+
+                @if (getFieldError(form.controls.sales_order_id); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="invoice-series"> Serie <span class="required">*</span> </label>
+
+                <input
+                    pInputText
+                    id="invoice-series"
+                    formControlName="invoice_series"
+                    maxlength="50"
+                    placeholder="Ej. A"
+                    class="w-full"
+                />
+
+                @if (getFieldError(form.controls.invoice_series); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="invoice-number">
+                    Número de factura <span class="required">*</span>
+                </label>
+
+                <input
+                    pInputText
+                    id="invoice-number"
+                    formControlName="invoice_number"
+                    maxlength="50"
+                    placeholder="Ej. 00000125"
+                    class="w-full"
+                />
+
+                @if (getFieldError(form.controls.invoice_number); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <div class="section-heading">
+            <div class="section-icon">
+                <i class="pi pi-shopping-cart"></i>
+            </div>
+
+            <div>
+                <h3>Productos de la orden</h3>
+                <p>Los productos e importes se obtienen automáticamente de la orden de venta.</p>
+            </div>
+        </div>
+
+        @if (selectedOrder(); as order) {
+            <div class="order-information">
+                <div>
+                    <span>Orden de venta</span>
+                    <strong>{{ order.order_number }}</strong>
+                </div>
+
+                <div>
+                    <span>Cliente</span>
+                    <strong>#{{ order.customer_id }}</strong>
+                </div>
+
+                <div>
+                    <span>Almacén</span>
+                    <strong>#{{ order.warehouse_id }}</strong>
+                </div>
+            </div>
+
+            <div class="details-table-wrapper">
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio unitario</th>
+                            <th>Descuento</th>
+                            <th>Impuesto</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @for (
+                            detail of order.details;
+                            track detail.sales_order_detail_id;
+                            let i = $index
+                        ) {
+                            <tr>
+                                <td>
+                                    <span class="row-number">{{ i + 1 }}</span>
+                                </td>
+
+                                <td class="product-cell">
+                                    <strong>{{ getProductName(detail.product_id) }}</strong>
+                                </td>
+
+                                <td>{{ formatQuantity(detail.quantity) }}</td>
+                                <td>{{ formatCurrency(detail.unit_price) }}</td>
+                                <td>{{ formatCurrency(detail.discount_amount) }}</td>
+                                <td>{{ formatCurrency(detail.tax_amount) }}</td>
+                                <td>
+                                    <strong>{{ formatCurrency(detail.total_amount) }}</strong>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="details-footer">
+                <span>
+                    <i class="pi pi-box"></i>
+                    {{ order.details.length }} productos
+                </span>
+
+                <span>
+                    Cantidad total:
+                    <strong>{{ formatQuantity(totalQuantity()) }}</strong>
+                </span>
+            </div>
+
+            <div class="totals-card">
+                <div class="total-row">
+                    <span>Subtotal</span>
+                    <strong>{{ formatCurrency(order.subtotal) }}</strong>
+                </div>
+
+                <div class="total-row">
+                    <span>Descuentos</span>
+                    <strong>- {{ formatCurrency(order.discount_amount) }}</strong>
+                </div>
+
+                <div class="total-row">
+                    <span>Impuestos</span>
+                    <strong>{{ formatCurrency(order.tax_amount) }}</strong>
+                </div>
+
+                <div class="grand-total">
+                    <span>Total a facturar</span>
+                    <strong>{{ formatCurrency(order.total_amount) }}</strong>
+                </div>
+            </div>
+
+            <p-message severity="warn">
+                Al emitir la factura se descontarán las existencias reservadas del inventario y la
+                orden pasará a estado completado.
+            </p-message>
+        } @else {
+            <div class="empty-products">
+                <i class="pi pi-inbox"></i>
+                <h3>Seleccione una orden de venta</h3>
+                <p>Los productos y los importes aparecerán aquí automáticamente.</p>
+            </div>
+        }
+    </section>
+</form>
