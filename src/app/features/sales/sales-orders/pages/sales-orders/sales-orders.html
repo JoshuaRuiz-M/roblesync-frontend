@@ -1,0 +1,111 @@
+<section class="sales-orders-page">
+    <header class="page-heading">
+        <div class="page-heading-content">
+            <div class="page-heading-icon">
+                <i class="pi pi-shopping-cart"></i>
+            </div>
+
+            <div class="page-heading-text">
+                <h1>Órdenes de venta</h1>
+                <p>
+                    Administre las órdenes de venta, clientes, autorizaciones de crédito y reservas
+                    de productos.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <div class="sales-orders-content">
+        <app-data-grid
+            [data]="orders()"
+            [columns]="columns"
+            [pagination]="pagination()"
+            [config]="gridConfig()"
+            [actions]="actions()"
+            [loading]="loading()"
+            [error]="error()"
+            (queryChange)="onQueryChange($event)"
+            (refresh)="refresh()"
+            (create)="onCreate()"
+            (actionClick)="onAction($event)"
+        />
+    </div>
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving() || !catalogsReady()"
+        saveLabel="Guardar orden"
+        (save)="saveOrder()"
+        width="90vw"
+    >
+        @if (loadingCatalogs()) {
+            <div class="catalog-loading">
+                <i class="pi pi-spin pi-spinner"></i>
+
+                <div>
+                    <strong>Cargando información</strong>
+                    <p>Obteniendo clientes, vendedores, almacenes y productos disponibles...</p>
+                </div>
+            </div>
+        }
+
+        @if (catalogsError()) {
+            <div class="catalog-error">
+                <div class="catalog-error-icon">
+                    <i class="pi pi-exclamation-triangle"></i>
+                </div>
+
+                <h3>No se pudo cargar la información</h3>
+
+                <p>
+                    Ocurrió un problema al obtener los catálogos necesarios para registrar la orden
+                    de venta.
+                </p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadCatalogs()"
+                />
+            </div>
+        }
+
+        @if (catalogsReady()) {
+            <app-sales-orders-form
+                [order]="selectedOrder()"
+                [customers]="customerItems()"
+                [salespersons]="salespersonItems()"
+                [warehouses]="warehouseItems()"
+                [products]="productItems()"
+            />
+        }
+    </app-form-dialog>
+
+    <app-sales-order-details
+        [(visible)]="detailsVisible"
+        [order]="selectedDetailsOrder()"
+        [customers]="customerItems()"
+        [salespersons]="salespersonItems()"
+        [warehouses]="warehouseItems()"
+        [products]="productItems()"
+        [canEdit]="canEdit()"
+        [canSubmit]="canSubmit()"
+        [canApprove]="canApprove()"
+        [canReserve]="canReserve()"
+        [canCancel]="canCancel()"
+        [canApproveCredit]="canApproveCredit()"
+        [canRejectCredit]="canRejectCredit()"
+        [processing]="processingOrderId() !== null"
+        (edit)="onEditFromDetails($event)"
+        (submit)="onSubmit($event)"
+        (approve)="onApprove($event)"
+        (reserve)="onReserve($event)"
+        (cancel)="onCancel($event)"
+        (approveCredit)="onApproveCredit($event)"
+        (rejectCredit)="onRejectCredit($event)"
+    />
+</section>

@@ -1,0 +1,170 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.sales-orders-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.page-heading {
+    padding: 1.5rem;
+    border: 1px solid var(--surface-border);
+    border-radius: 1rem;
+    background: var(--surface-card);
+}
+
+.page-heading-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.page-heading-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    flex-shrink: 0;
+    border-radius: 1rem;
+    background: var(--p-primary-50, var(--surface-100));
+    color: var(--p-primary-color);
+
+    i {
+        font-size: 1.5rem;
+    }
+}
+
+.page-heading-text {
+    min-width: 0;
+
+    h1 {
+        margin: 0 0 0.375rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--text-color-secondary);
+    }
+}
+
+.sales-orders-content {
+    min-width: 0;
+    width: 100%;
+}
+
+.catalog-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 220px;
+    padding: 2rem;
+    text-align: left;
+
+    > i {
+        font-size: 2rem;
+        color: var(--p-primary-color);
+    }
+
+    strong {
+        display: block;
+        margin-bottom: 0.375rem;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
+    }
+}
+
+.catalog-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 260px;
+    padding: 2rem;
+    text-align: center;
+
+    h3 {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+    }
+
+    p {
+        max-width: 420px;
+        margin: 0;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        color: var(--text-color-secondary);
+    }
+}
+
+.catalog-error-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1rem;
+    background: var(--p-red-50, var(--surface-100));
+    color: var(--p-red-500, #ef4444);
+
+    i {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sales-orders-page {
+        gap: 1rem;
+    }
+
+    .page-heading {
+        padding: 1rem;
+    }
+
+    .page-heading-content {
+        align-items: flex-start;
+    }
+
+    .page-heading-icon {
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 0.75rem;
+
+        i {
+            font-size: 1.2rem;
+        }
+    }
+
+    .page-heading-text {
+        h1 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            font-size: 0.8rem;
+        }
+    }
+
+    .catalog-loading {
+        flex-direction: column;
+        text-align: center;
+    }
+}

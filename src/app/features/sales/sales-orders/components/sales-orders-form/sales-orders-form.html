@@ -1,0 +1,321 @@
+<form class="sales-order-form" [formGroup]="form">
+    <section class="form-section">
+        <div class="section-heading">
+            <div class="section-icon">
+                <i class="pi pi-file-edit"></i>
+            </div>
+
+            <div>
+                <h3>Información de la orden</h3>
+                <p>Seleccione el cliente, vendedor y almacén.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-field">
+                <label for="customer"> Cliente <span class="required">*</span> </label>
+
+                <p-select
+                    inputId="customer"
+                    formControlName="customer_id"
+                    [options]="customerOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione un cliente"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    appendTo="body"
+                    styleClass="w-full"
+                    (onChange)="onCustomerChange($event.value)"
+                />
+
+                @if (getFieldError(form.controls.customer_id); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="salesperson"> Vendedor <span class="required">*</span> </label>
+
+                <p-select
+                    inputId="salesperson"
+                    formControlName="salesperson_id"
+                    [options]="salespersonOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione un vendedor"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    appendTo="body"
+                    styleClass="w-full"
+                />
+
+                @if (getFieldError(form.controls.salesperson_id); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="warehouse"> Almacén <span class="required">*</span> </label>
+
+                <p-select
+                    inputId="warehouse"
+                    formControlName="warehouse_id"
+                    [options]="warehouseOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione un almacén"
+                    [filter]="true"
+                    filterBy="label"
+                    [showClear]="true"
+                    appendTo="body"
+                    styleClass="w-full"
+                />
+
+                @if (getFieldError(form.controls.warehouse_id); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field notes-field">
+                <label for="notes">Observaciones</label>
+
+                <textarea
+                    pTextarea
+                    id="notes"
+                    formControlName="notes"
+                    rows="3"
+                    maxlength="500"
+                    placeholder="Agregue indicaciones sobre la venta..."
+                    class="w-full"
+                ></textarea>
+
+                <div class="field-footer">
+                    @if (getFieldError(form.controls.notes); as error) {
+                        <small class="field-error">{{ error }}</small>
+                    }
+
+                    <small class="character-count">
+                        {{ form.controls.notes.value.length }}/500
+                    </small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="form-section details-section">
+        <div class="section-heading details-heading">
+            <div class="section-heading-content">
+                <div class="section-icon">
+                    <i class="pi pi-box"></i>
+                </div>
+
+                <div>
+                    <h3>Productos de la orden</h3>
+                    <p>Agregue los productos, cantidades y precios de venta.</p>
+                </div>
+            </div>
+
+            <p-button
+                label="Agregar producto"
+                icon="pi pi-plus"
+                severity="primary"
+                [outlined]="true"
+                size="small"
+                (onClick)="addDetail()"
+            />
+        </div>
+
+        <div class="details-table-wrapper">
+            <table class="details-table">
+                <thead>
+                    <tr>
+                        <th class="number-column">#</th>
+                        <th class="product-column">Producto</th>
+                        <th class="quantity-column">Cantidad</th>
+                        <th class="cost-column">Precio unitario</th>
+                        <th class="discount-column">Descuento</th>
+                        <th class="subtotal-column">Subtotal</th>
+                        <th class="action-column"></th>
+                    </tr>
+                </thead>
+
+                <tbody formArrayName="details">
+                    @for (detail of detailControls; track detail; let i = $index) {
+                        <tr [formGroupName]="i">
+                            <td class="number-cell">
+                                <span class="row-number">{{ i + 1 }}</span>
+                            </td>
+
+                            <td>
+                                <div class="detail-field">
+                                    <p-select
+                                        formControlName="product_id"
+                                        [options]="getAvailableProducts(i)"
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        placeholder="Seleccionar producto"
+                                        [filter]="true"
+                                        filterBy="label"
+                                        [showClear]="true"
+                                        appendTo="body"
+                                        styleClass="w-full"
+                                    />
+
+                                    @if (getFieldError(detail.controls.product_id); as error) {
+                                        <small class="field-error">{{ error }}</small>
+                                    }
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="detail-field">
+                                    <p-inputnumber
+                                        formControlName="quantity"
+                                        [min]="0.001"
+                                        [minFractionDigits]="0"
+                                        [maxFractionDigits]="3"
+                                        [useGrouping]="false"
+                                        inputStyleClass="number-input"
+                                        styleClass="w-full"
+                                    />
+
+                                    @if (getFieldError(detail.controls.quantity); as error) {
+                                        <small class="field-error">{{ error }}</small>
+                                    }
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="detail-field">
+                                    <p-inputnumber
+                                        formControlName="unit_price"
+                                        mode="decimal"
+                                        [min]="0"
+                                        [minFractionDigits]="2"
+                                        [maxFractionDigits]="4"
+                                        [useGrouping]="true"
+                                        inputStyleClass="number-input"
+                                        styleClass="w-full"
+                                    />
+
+                                    @if (getFieldError(detail.controls.unit_price); as error) {
+                                        <small class="field-error">{{ error }}</small>
+                                    }
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="detail-field">
+                                    <p-inputnumber
+                                        formControlName="discount_amount"
+                                        mode="currency"
+                                        currency="GTQ"
+                                        locale="es-GT"
+                                        [min]="0"
+                                        [maxFractionDigits]="2"
+                                        inputStyleClass="number-input"
+                                        styleClass="w-full"
+                                    />
+
+                                    @if (getFieldError(detail.controls.discount_amount); as error) {
+                                        <small class="field-error">{{ error }}</small>
+                                    }
+                                </div>
+                            </td>
+
+                            <td class="subtotal-cell">
+                                <span>
+                                    {{ formatCurrency(calculateDetail(i).taxableAmount) }}
+                                </span>
+                            </td>
+
+                            <td class="action-cell">
+                                <p-button
+                                    icon="pi pi-trash"
+                                    severity="danger"
+                                    [text]="true"
+                                    [rounded]="true"
+                                    size="small"
+                                    [disabled]="details.length === 1"
+                                    (onClick)="removeDetail(i)"
+                                    pTooltip="Quitar producto"
+                                />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (details.hasError('duplicateProducts')) {
+            <p-message severity="error">
+                No puede agregar el mismo producto más de una vez.
+            </p-message>
+        }
+
+        @if (details.hasError('invalidDiscount')) {
+            <p-message severity="error">
+                El descuento no puede superar el subtotal del producto.
+            </p-message>
+        }
+
+        <div class="details-footer">
+            <span>
+                <i class="pi pi-box"></i>
+                {{ details.length }}
+                {{ details.length === 1 ? 'producto agregado' : 'productos agregados' }}
+            </span>
+
+            <span>Los importes se actualizan automáticamente.</span>
+        </div>
+    </section>
+
+    <section class="summary-section">
+        <div class="summary-heading">
+            <div class="summary-icon">
+                <i class="pi pi-calculator"></i>
+            </div>
+
+            <div>
+                <h3>Resumen de la orden</h3>
+                <p>Importes calculados según los productos registrados.</p>
+            </div>
+        </div>
+
+        <div class="summary-content">
+            <div class="summary-row">
+                <span>Subtotal de productos</span>
+                <strong>{{ formatCurrency(totals().subtotal) }}</strong>
+            </div>
+
+            <div class="summary-row discount-row">
+                <span>Descuentos</span>
+                <strong>-{{ formatCurrency(totals().discount) }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Base imponible</span>
+                <strong>{{ formatCurrency(totals().taxableAmount) }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>IVA (12 %)</span>
+                <strong>{{ formatCurrency(totals().tax) }}</strong>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-total">
+                <div>
+                    <span>Total de la orden</span>
+                    <small>Quetzales (GTQ)</small>
+                </div>
+
+                <strong>{{ formatCurrency(totals().total) }}</strong>
+            </div>
+        </div>
+    </section>
+</form>

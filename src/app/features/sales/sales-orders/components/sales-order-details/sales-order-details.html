@@ -1,0 +1,436 @@
+<p-drawer
+    [(visible)]="visible"
+    position="right"
+    [modal]="true"
+    [dismissible]="true"
+    [blockScroll]="true"
+    styleClass="sales-order-details-drawer"
+>
+    <ng-template #header>
+        <div class="drawer-heading">
+            <div class="drawer-heading-icon">
+                <i class="pi pi-shopping-cart"></i>
+            </div>
+
+            <div class="drawer-heading-text">
+                <h2>Detalle de orden</h2>
+                <span>{{ order()?.order_number ?? 'Orden de venta' }}</span>
+            </div>
+        </div>
+    </ng-template>
+
+    @if (order(); as currentOrder) {
+        <div class="order-details">
+            <section class="order-hero">
+                <div class="order-hero-top">
+                    <div class="order-hero-icon">
+                        <i class="pi pi-file"></i>
+                    </div>
+
+                    <p-tag
+                        [value]="status().label"
+                        [severity]="status().severity"
+                        [icon]="status().icon"
+                        [rounded]="true"
+                    />
+                </div>
+
+                <div class="order-hero-content">
+                    <span class="eyebrow">Orden de venta</span>
+                    <h3>{{ currentOrder.order_number }}</h3>
+                    <p>
+                        Registrada el
+                        {{ formatDate(currentOrder.order_date) }}
+                    </p>
+                </div>
+
+                <div class="order-hero-total">
+                    <span>Importe total</span>
+                    <strong>
+                        {{ formatCurrency(currentOrder.total_amount) }}
+                    </strong>
+                </div>
+            </section>
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-users"></i>
+                    </div>
+
+                    <h3>Cliente</h3>
+                </div>
+
+                <div class="customer-card">
+                    <div class="customer-avatar">
+                        <i class="pi pi-building"></i>
+                    </div>
+
+                    <div class="customer-information">
+                        <strong>
+                            {{ customer()?.business_name ?? 'Cliente no disponible' }}
+                        </strong>
+
+                        <span>
+                            {{ customer()?.tax_id ?? 'Sin identificación fiscal' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="information-grid">
+                    <div class="information-item">
+                        <span>Código de cliente</span>
+                        <strong>
+                            {{ customer()?.customer_code ?? 'No disponible' }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Contacto</span>
+                        <strong>
+                            {{ customer()?.contact_name || 'No registrado' }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Teléfono</span>
+                        <strong>
+                            {{ customer()?.phone || 'No registrado' }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Días de crédito</span>
+                        <strong>{{ customer()?.credit_days ?? 0 }} días</strong>
+                    </div>
+                </div>
+            </section>
+
+            <p-divider />
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-info-circle"></i>
+                    </div>
+
+                    <h3>Información de la orden</h3>
+                </div>
+
+                <div class="information-grid">
+                    <div class="information-item">
+                        <span>Fecha de orden</span>
+                        <strong>
+                            {{ formatDate(currentOrder.order_date) }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Vendedor</span>
+                        <strong>
+                            {{ salesperson()?.employee_code ?? 'No disponible' }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Almacén</span>
+                        <strong>
+                            {{ warehouse()?.name ?? 'No disponible' }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Productos registrados</span>
+                        <strong>{{ currentOrder.details.length }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Unidades solicitadas</span>
+                        <strong>
+                            {{ formatQuantity(totalQuantity()) }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Unidades reservadas</span>
+                        <strong>
+                            {{ formatQuantity(totalReserved()) }}
+                        </strong>
+                    </div>
+                </div>
+            </section>
+
+            <p-divider />
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-credit-card"></i>
+                    </div>
+
+                    <h3>Estado del crédito</h3>
+                </div>
+
+                <div class="credit-card">
+                    <div class="credit-status">
+                        <span>Autorización crediticia</span>
+
+                        <p-tag
+                            [value]="creditStatus().label"
+                            [severity]="creditStatus().severity"
+                            [icon]="creditStatus().icon"
+                            [rounded]="true"
+                        />
+                    </div>
+
+                    <div class="information-grid">
+                        <div class="information-item">
+                            <span>Límite de crédito del cliente</span>
+                            <strong>
+                                {{ formatCurrency(customer()?.credit_limit ?? 0) }}
+                            </strong>
+                        </div>
+
+                        <div class="information-item">
+                            <span>Fecha de autorización</span>
+                            <strong>
+                                {{ formatDate(currentOrder.credit_authorized_at) }}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <p-divider />
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-box"></i>
+                    </div>
+
+                    <div class="section-heading-text">
+                        <h3>Productos solicitados</h3>
+                        <p>
+                            {{ currentOrder.details.length }}
+                            líneas registradas
+                        </p>
+                    </div>
+                </div>
+
+                <div class="products-list">
+                    @for (
+                        detail of currentOrder.details;
+                        track detail.sales_order_detail_id;
+                        let i = $index
+                    ) {
+                        <article class="product-card">
+                            <div class="product-card-heading">
+                                <div class="product-number">
+                                    {{ i + 1 }}
+                                </div>
+
+                                <div class="product-information">
+                                    <strong>
+                                        {{ getProductName(detail.product_id) }}
+                                    </strong>
+                                    <span>
+                                        {{ getProductSku(detail.product_id) }}
+                                    </span>
+                                </div>
+
+                                <div class="product-total">
+                                    {{ formatCurrency(detail.total_amount) }}
+                                </div>
+                            </div>
+
+                            <div class="product-card-details">
+                                <div>
+                                    <span>Cantidad</span>
+                                    <strong>
+                                        {{ formatQuantity(detail.quantity) }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Precio unitario</span>
+                                    <strong>
+                                        {{ formatUnitPrice(detail.unit_price) }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Descuento</span>
+                                    <strong>
+                                        {{ formatCurrency(detail.discount_amount) }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>IVA</span>
+                                    <strong>
+                                        {{ formatCurrency(detail.tax_amount) }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Reservado</span>
+                                    <strong>
+                                        {{ formatQuantity(detail.quantity_reserved) }}
+                                    </strong>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </section>
+
+            <section class="totals-card">
+                <div class="totals-heading">
+                    <i class="pi pi-calculator"></i>
+                    <h3>Resumen financiero</h3>
+                </div>
+
+                <div class="total-row">
+                    <span>Subtotal</span>
+                    <strong>
+                        {{ formatCurrency(currentOrder.subtotal) }}
+                    </strong>
+                </div>
+
+                <div class="total-row">
+                    <span>Descuentos</span>
+                    <strong> -{{ formatCurrency(currentOrder.discount_amount) }} </strong>
+                </div>
+
+                <div class="total-row">
+                    <span>IVA (12 %)</span>
+                    <strong>
+                        {{ formatCurrency(currentOrder.tax_amount) }}
+                    </strong>
+                </div>
+
+                <div class="total-divider"></div>
+
+                <div class="grand-total">
+                    <span>Total de la orden</span>
+                    <strong>
+                        {{ formatCurrency(currentOrder.total_amount) }}
+                    </strong>
+                </div>
+            </section>
+
+            @if (currentOrder.notes) {
+                <section class="detail-section">
+                    <div class="section-heading">
+                        <div class="section-heading-icon">
+                            <i class="pi pi-align-left"></i>
+                        </div>
+
+                        <h3>Observaciones</h3>
+                    </div>
+
+                    <div class="notes-card">
+                        {{ currentOrder.notes }}
+                    </div>
+                </section>
+            }
+
+            <div class="order-audit">
+                <i class="pi pi-clock"></i>
+                <span>
+                    Última actualización:
+                    {{
+                        currentOrder.updated_at
+                            ? formatDate(currentOrder.updated_at)
+                            : 'Sin modificaciones'
+                    }}
+                </span>
+            </div>
+        </div>
+    }
+
+    <ng-template #footer>
+        <div class="drawer-footer">
+            <p-button
+                label="Cerrar"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="visible.set(false)"
+            />
+
+            @if (canCancelOrder()) {
+                <p-button
+                    label="Cancelar orden"
+                    icon="pi pi-times"
+                    severity="danger"
+                    [outlined]="true"
+                    [disabled]="processing()"
+                    (onClick)="onCancel()"
+                />
+            }
+
+            @if (canEditOrder()) {
+                <p-button
+                    label="Editar"
+                    icon="pi pi-pencil"
+                    severity="secondary"
+                    [outlined]="true"
+                    [disabled]="processing()"
+                    (onClick)="onEdit()"
+                />
+            }
+
+            @if (canRejectCreditOrder()) {
+                <p-button
+                    label="Rechazar crédito"
+                    icon="pi pi-times-circle"
+                    severity="danger"
+                    [outlined]="true"
+                    [disabled]="processing()"
+                    (onClick)="onRejectCredit()"
+                />
+            }
+
+            @if (canApproveCreditOrder()) {
+                <p-button
+                    label="Autorizar crédito"
+                    icon="pi pi-credit-card"
+                    severity="success"
+                    [outlined]="true"
+                    [disabled]="processing()"
+                    (onClick)="onApproveCredit()"
+                />
+            }
+
+            @if (canSubmitOrder()) {
+                <p-button
+                    label="Enviar"
+                    icon="pi pi-send"
+                    [loading]="processing()"
+                    (onClick)="onSubmit()"
+                />
+            }
+
+            @if (canApproveOrder()) {
+                <p-button
+                    label="Aprobar"
+                    icon="pi pi-check"
+                    severity="success"
+                    [loading]="processing()"
+                    (onClick)="onApprove()"
+                />
+            }
+
+            @if (canReserveOrder()) {
+                <p-button
+                    label="Reservar"
+                    icon="pi pi-box"
+                    severity="success"
+                    [loading]="processing()"
+                    (onClick)="onReserve()"
+                />
+            }
+        </div>
+    </ng-template>
+</p-drawer>
