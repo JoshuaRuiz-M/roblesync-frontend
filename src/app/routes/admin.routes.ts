@@ -141,6 +141,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'price-lists',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/sales/price-lists/price-lists.routes').then(
+                        (m) => m.PRICE_LISTS_ROUTES,
+                    ),
+            },
+            {
                 path: 'forbidden',
                 title: 'Acceso denegado',
                 loadComponent: () =>

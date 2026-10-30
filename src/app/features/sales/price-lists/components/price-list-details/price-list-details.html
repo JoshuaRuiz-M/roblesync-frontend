@@ -1,0 +1,224 @@
+<p-drawer
+    [(visible)]="visible"
+    position="right"
+    [modal]="true"
+    [dismissible]="true"
+    [blockScroll]="true"
+    styleClass="price-list-details-drawer"
+>
+    <ng-template #header>
+        <div class="drawer-heading">
+            <div class="drawer-heading-icon">
+                <i class="pi pi-tags"></i>
+            </div>
+
+            <div class="drawer-heading-text">
+                <h2>Detalle de lista de precios</h2>
+                <span>{{ priceList()?.code ?? 'Lista de precios' }}</span>
+            </div>
+        </div>
+    </ng-template>
+
+    @if (priceList(); as currentPriceList) {
+        <div class="price-list-details">
+            <section class="price-list-hero">
+                <div class="hero-top">
+                    <div class="hero-icon">
+                        <i class="pi pi-tag"></i>
+                    </div>
+
+                    <p-tag
+                        [value]="status().label"
+                        [severity]="status().severity"
+                        [icon]="status().icon"
+                        [rounded]="true"
+                    />
+                </div>
+
+                <div class="hero-content">
+                    <span class="eyebrow">Lista de precios</span>
+
+                    <h3>{{ currentPriceList.name }}</h3>
+
+                    <p>{{ currentPriceList.code }}</p>
+                </div>
+
+                <div class="hero-summary">
+                    <span>Productos registrados</span>
+                    <strong>{{ totalProducts() }}</strong>
+                </div>
+            </section>
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-info-circle"></i>
+                    </div>
+
+                    <h3>Información general</h3>
+                </div>
+
+                <div class="information-grid">
+                    <div class="information-item">
+                        <span>Código</span>
+                        <strong>{{ currentPriceList.code }}</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Estado</span>
+                        <strong>
+                            {{ currentPriceList.is_active ? 'Activa' : 'Inactiva' }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Fecha de creación</span>
+                        <strong>
+                            {{ formatDate(currentPriceList.created_at) }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Última actualización</span>
+                        <strong>
+                            {{ formatDate(currentPriceList.updated_at) }}
+                        </strong>
+                    </div>
+                </div>
+            </section>
+
+            @if (currentPriceList.description) {
+                <section class="detail-section">
+                    <div class="section-heading">
+                        <div class="section-heading-icon">
+                            <i class="pi pi-align-left"></i>
+                        </div>
+
+                        <h3>Descripción</h3>
+                    </div>
+
+                    <div class="description-card">
+                        {{ currentPriceList.description }}
+                    </div>
+                </section>
+            }
+
+            <p-divider />
+
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div class="section-heading-icon">
+                        <i class="pi pi-box"></i>
+                    </div>
+
+                    <div class="section-heading-text">
+                        <h3>Productos y precios</h3>
+                        <p>
+                            {{ totalProducts() }}
+                            {{
+                                totalProducts() === 1
+                                    ? 'producto registrado'
+                                    : 'productos registrados'
+                            }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="products-list">
+                    @for (
+                        detail of currentPriceList.details;
+                        track detail.price_list_detail_id;
+                        let i = $index
+                    ) {
+                        <article class="product-card">
+                            <div class="product-card-heading">
+                                <div class="product-number">
+                                    {{ i + 1 }}
+                                </div>
+
+                                <div class="product-information">
+                                    <strong>
+                                        {{ getProductName(detail.product_id) }}
+                                    </strong>
+
+                                    <span>
+                                        {{ getProductSku(detail.product_id) }}
+                                    </span>
+                                </div>
+
+                                <div class="product-price">
+                                    {{ formatUnitPrice(detail.unit_price) }}
+                                </div>
+                            </div>
+
+                            <div class="product-card-details">
+                                <div>
+                                    <span>Precio de la lista</span>
+                                    <strong>
+                                        {{ formatUnitPrice(detail.unit_price) }}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Precio base del producto</span>
+
+                                    @if (getProductBasePrice(detail.product_id) !== null) {
+                                        <strong>
+                                            {{
+                                                formatUnitPrice(
+                                                    getProductBasePrice(detail.product_id)!
+                                                )
+                                            }}
+                                        </strong>
+                                    } @else {
+                                        <strong>No disponible</strong>
+                                    }
+                                </div>
+                            </div>
+                        </article>
+                    } @empty {
+                        <div class="empty-products">
+                            <i class="pi pi-inbox"></i>
+                            <strong>Sin productos registrados</strong>
+                            <p>Esta lista todavía no contiene productos.</p>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <div class="audit-information">
+                <i class="pi pi-clock"></i>
+
+                <span>
+                    Última actualización:
+                    {{
+                        currentPriceList.updated_at
+                            ? formatDate(currentPriceList.updated_at)
+                            : 'Sin modificaciones'
+                    }}
+                </span>
+            </div>
+        </div>
+    }
+
+    <ng-template #footer>
+        <div class="drawer-footer">
+            <p-button
+                label="Cerrar"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="visible.set(false)"
+            />
+
+            @if (canEditPriceList()) {
+                <p-button
+                    label="Editar lista"
+                    icon="pi pi-pencil"
+                    severity="primary"
+                    [disabled]="processing()"
+                    (onClick)="onEdit()"
+                />
+            }
+        </div>
+    </ng-template>
+</p-drawer>

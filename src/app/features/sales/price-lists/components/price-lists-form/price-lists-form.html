@@ -1,0 +1,204 @@
+<form class="price-list-form" [formGroup]="form">
+    <section class="form-section">
+        <div class="section-heading">
+            <div class="section-icon">
+                <i class="pi pi-tags"></i>
+            </div>
+
+            <div>
+                <h3>Información de la lista</h3>
+                <p>Configure los datos generales de la lista de precios.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-field">
+                <label for="code"> Código <span class="required">*</span> </label>
+
+                <input
+                    pInputText
+                    id="code"
+                    formControlName="code"
+                    maxlength="50"
+                    placeholder="Ej. MAYORISTA"
+                    class="w-full"
+                />
+
+                @if (getFieldError(form.controls.code); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field">
+                <label for="name"> Nombre <span class="required">*</span> </label>
+
+                <input
+                    pInputText
+                    id="name"
+                    formControlName="name"
+                    maxlength="150"
+                    placeholder="Ej. Precios Mayoristas"
+                    class="w-full"
+                />
+
+                @if (getFieldError(form.controls.name); as error) {
+                    <small class="field-error">{{ error }}</small>
+                }
+            </div>
+
+            <div class="form-field description-field">
+                <label for="description">Descripción</label>
+
+                <textarea
+                    pTextarea
+                    id="description"
+                    formControlName="description"
+                    rows="3"
+                    maxlength="500"
+                    placeholder="Describa el propósito de esta lista de precios..."
+                    class="w-full"
+                ></textarea>
+
+                <div class="field-footer">
+                    @if (getFieldError(form.controls.description); as error) {
+                        <small class="field-error">{{ error }}</small>
+                    }
+
+                    <small class="character-count">
+                        {{ form.controls.description.value.length }}/500
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-field status-field">
+                <div class="status-control">
+                    <p-checkbox inputId="is-active" formControlName="is_active" [binary]="true" />
+
+                    <label for="is-active">Lista de precios activa</label>
+                </div>
+
+                <small>
+                    Las listas inactivas pueden conservarse sin estar disponibles para nuevas
+                    operaciones comerciales.
+                </small>
+            </div>
+        </div>
+    </section>
+
+    <section class="form-section details-section">
+        <div class="section-heading details-heading">
+            <div class="section-heading-content">
+                <div class="section-icon">
+                    <i class="pi pi-box"></i>
+                </div>
+
+                <div>
+                    <h3>Productos y precios</h3>
+                    <p>Seleccione los productos y establezca sus precios de venta.</p>
+                </div>
+            </div>
+
+            <p-button
+                label="Agregar producto"
+                icon="pi pi-plus"
+                severity="primary"
+                [outlined]="true"
+                size="small"
+                (onClick)="addDetail()"
+            />
+        </div>
+
+        <div class="details-table-wrapper">
+            <table class="details-table">
+                <thead>
+                    <tr>
+                        <th class="number-column">#</th>
+                        <th class="product-column">Producto</th>
+                        <th class="price-column">Precio unitario</th>
+                        <th class="action-column"></th>
+                    </tr>
+                </thead>
+
+                <tbody formArrayName="details">
+                    @for (detail of detailControls; track detail; let i = $index) {
+                        <tr [formGroupName]="i">
+                            <td class="number-cell">
+                                <span class="row-number">{{ i + 1 }}</span>
+                            </td>
+
+                            <td>
+                                <div class="detail-field">
+                                    <p-select
+                                        formControlName="product_id"
+                                        [options]="getAvailableProducts(i)"
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        placeholder="Seleccionar producto"
+                                        [filter]="true"
+                                        filterBy="label"
+                                        [showClear]="true"
+                                        appendTo="body"
+                                        styleClass="w-full"
+                                        (onChange)="onProductChange(i, $event.value)"
+                                    />
+
+                                    @if (getFieldError(detail.controls.product_id); as error) {
+                                        <small class="field-error">{{ error }}</small>
+                                    }
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="detail-field">
+                                    <p-inputnumber
+                                        formControlName="unit_price"
+                                        mode="decimal"
+                                        [min]="0"
+                                        [minFractionDigits]="2"
+                                        [maxFractionDigits]="4"
+                                        [useGrouping]="true"
+                                        inputStyleClass="number-input"
+                                        styleClass="w-full"
+                                    />
+
+                                    @if (getFieldError(detail.controls.unit_price); as error) {
+                                        <small class="field-error">{{ error }}</small>
+                                    }
+                                </div>
+                            </td>
+
+                            <td class="action-cell">
+                                <p-button
+                                    icon="pi pi-trash"
+                                    severity="danger"
+                                    [text]="true"
+                                    [rounded]="true"
+                                    size="small"
+                                    [disabled]="details.length === 1"
+                                    (onClick)="removeDetail(i)"
+                                    pTooltip="Quitar producto"
+                                />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (details.hasError('duplicateProducts')) {
+            <p-message severity="error">
+                No puede agregar el mismo producto más de una vez.
+            </p-message>
+        }
+
+        <div class="details-footer">
+            <span>
+                <i class="pi pi-box"></i>
+                {{ totalProducts() }}
+                {{ totalProducts() === 1 ? 'producto seleccionado' : 'productos seleccionados' }}
+            </span>
+
+            <span> Los precios pueden modificarse individualmente. </span>
+        </div>
+    </section>
+</form>

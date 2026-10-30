@@ -1,0 +1,350 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.price-list-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 0.25rem;
+}
+
+.form-section {
+    padding: 1.5rem;
+    border: 1px solid var(--p-content-border-color);
+    border-radius: 1rem;
+    background: var(--p-content-background);
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    h3 {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--p-text-color);
+    }
+
+    p {
+        margin: 0.35rem 0 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--p-text-muted-color);
+    }
+}
+
+.section-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.8rem;
+    background: var(--p-primary-50);
+    color: var(--p-primary-600);
+
+    i {
+        font-size: 1.15rem;
+    }
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+
+    > label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--p-text-color);
+    }
+
+    input,
+    textarea {
+        width: 100%;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 5.5rem;
+        line-height: 1.5;
+    }
+}
+
+.description-field {
+    grid-column: 1 / -1;
+}
+
+.status-field {
+    grid-column: 1 / -1;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--p-content-border-color);
+    border-radius: 0.75rem;
+    background: var(--p-content-hover-background);
+
+    > small {
+        font-size: 0.8rem;
+        line-height: 1.5;
+        color: var(--p-text-muted-color);
+    }
+}
+
+.status-control {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    label {
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--p-text-color);
+    }
+}
+
+.required {
+    color: var(--p-red-500);
+}
+
+.field-error {
+    display: block;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: var(--p-red-500);
+}
+
+.field-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.character-count {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: var(--p-text-muted-color);
+}
+
+.details-section {
+    min-width: 0;
+}
+
+.details-heading {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.section-heading-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.details-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--p-content-border-color);
+    border-radius: 0.75rem;
+}
+
+.details-table {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    thead {
+        background: var(--p-content-hover-background);
+    }
+
+    th {
+        padding: 0.9rem 1rem;
+        text-align: left;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--p-text-muted-color);
+        border-bottom: 1px solid var(--p-content-border-color);
+    }
+
+    td {
+        padding: 0.85rem 1rem;
+        vertical-align: top;
+        border-bottom: 1px solid var(--p-content-border-color);
+    }
+
+    tbody tr {
+        transition: background-color 0.15s ease;
+
+        &:hover {
+            background: var(--p-content-hover-background);
+        }
+
+        &:last-child td {
+            border-bottom: none;
+        }
+    }
+}
+
+.number-column {
+    width: 65px;
+}
+
+.product-column {
+    width: 55%;
+}
+
+.price-column {
+    width: 30%;
+}
+
+.action-column {
+    width: 75px;
+    text-align: center !important;
+}
+
+.number-cell {
+    padding-top: 1.2rem !important;
+}
+
+.row-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.5rem;
+    background: var(--p-content-hover-background);
+    color: var(--p-text-muted-color);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.detail-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+.action-cell {
+    text-align: center;
+}
+
+.details-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    font-size: 0.825rem;
+    color: var(--p-text-muted-color);
+
+    span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    i {
+        color: var(--p-primary-color);
+    }
+}
+
+:host ::ng-deep {
+    .p-select,
+    .p-inputnumber,
+    .p-inputnumber-input {
+        width: 100%;
+    }
+
+    .p-select {
+        min-width: 0;
+    }
+
+    .number-input {
+        width: 100%;
+        text-align: right;
+    }
+
+    .p-message {
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .price-list-form {
+        gap: 1rem;
+    }
+
+    .form-section {
+        padding: 1rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .description-field,
+    .status-field {
+        grid-column: auto;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+    }
+
+    .section-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .details-heading {
+        align-items: stretch;
+    }
+
+    .details-heading > p-button {
+        width: 100%;
+    }
+
+    .details-table {
+        min-width: 600px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-section {
+        padding: 0.875rem;
+        border-radius: 0.75rem;
+    }
+
+    .section-heading h3 {
+        font-size: 0.95rem;
+    }
+
+    .section-heading p {
+        font-size: 0.8rem;
+    }
+
+    .details-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
