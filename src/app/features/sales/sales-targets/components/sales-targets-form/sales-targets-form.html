@@ -1,0 +1,72 @@
+<form [formGroup]="form" class="sales-targets-form" autocomplete="off">
+    <div class="form-field">
+        <label for="salesperson">Vendedor <span class="required">*</span></label>
+
+        <p-select
+            inputId="salesperson"
+            formControlName="salesperson_id"
+            [options]="salepersonOptions()"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Seleccione un vendedor"
+            [showClear]="true"
+            [filter]="true"
+            filterBy="label"
+            [fluid]="true"
+            appendTo="body"
+        />
+
+        @if (getFieldError('salesperson_id'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+    <div class="form-field">
+        <label for="targetyear">Año <span class="required">*</span></label>
+        <p-inputNumber
+            inputId="targetyear"
+            formControlName="target_year"
+            [min]="0"
+            [max]="9999"
+            [showButtons]="true"
+            [buttonLayout]="'horizontal'"
+            [placeholder]="'Ingrese el año'"
+            [useGrouping]="true"
+        />
+        @if (getFieldError('target_year'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+    <div class="form-field">
+        <label for="targetmonth">Mes <span class="required">*</span></label>
+        <p-inputNumber
+            inputId="targetmonth"
+            formControlName="target_month"
+            [min]="0"
+            [max]="12"
+            [showButtons]="true"
+            [buttonLayout]="'horizontal'"
+            [step]="1"
+            [placeholder]="'Ingrese el mes'"
+            [useGrouping]="true"
+        />
+        @if (getFieldError('target_month'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+    <div class="form-field">
+        <label for="targetamount">Monto <span class="required">*</span></label>
+        <p-inputNumber
+            inputId="targetamount"
+            formControlName="target_amount"
+            [min]="0"
+            [showButtons]="true"
+            [buttonLayout]="'horizontal'"
+            [step]="1"
+            [placeholder]="'Ingrese el monto'"
+            [useGrouping]="true"
+        />
+        @if (getFieldError('target_amount'); as error) {
+            <small class="field-error">{{ error }}</small>
+        }
+    </div>
+</form>

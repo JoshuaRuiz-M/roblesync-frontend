@@ -1,0 +1,54 @@
+<section class="sales-targets-page">
+    <header class="page-heading">
+        <div>
+            <h1>Objetivos de Venta</h1>
+            <p>Administre los objetivos de venta del sistema.</p>
+        </div>
+    </header>
+
+    <app-data-grid
+        [data]="salestargets()"
+        [columns]="columns"
+        [pagination]="pagination()"
+        [config]="gridConfig()"
+        [actions]="actions()"
+        [loading]="loading()"
+        [error]="error()"
+        (queryChange)="onQueryChange($event)"
+        (refresh)="refresh()"
+        (create)="onCreate()"
+        (actionClick)="onAction($event)"
+    />
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving()"
+        saveLabel="Guardar"
+        (save)="saveSalesTargets()"
+    >
+        @if (salespersonsLoading()) {
+            <p class="text-muted">Cargando vendedores...</p>
+        }
+
+        @if (salespersonsError()) {
+            <div class="parent-error">
+                <p>No fue posible cargar los vendedores.</p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadSalespersonsItems()"
+                />
+            </div>
+        }
+
+        <app-sales-targets-form
+            [salesTarget]="selectedSalesTarget()"
+            [salepersonItems]="salespersonsItems()"
+        />
+    </app-form-dialog>
+</section>

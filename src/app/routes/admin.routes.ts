@@ -165,6 +165,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'sales-targets',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/sales/sales-targets/sales-targets.routes').then(
+                        (m) => m.SALES_TARGETS_ROUTES,
+                    ),
+            },
+            {
                 path: 'forbidden',
                 title: 'Acceso denegado',
                 loadComponent: () =>
