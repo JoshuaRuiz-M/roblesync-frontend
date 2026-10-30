@@ -1,0 +1,53 @@
+<section class="product-batches-page">
+    <header class="page-heading">
+        <div>
+            <h1>Lotes de producto</h1>
+            <p>Administre las lotes de producto del sistema.</p>
+        </div>
+    </header>
+
+    <app-data-grid
+        [data]="productBatches()"
+        [columns]="columns"
+        [pagination]="pagination()"
+        [config]="gridConfig()"
+        [actions]="actions()"
+        [loading]="loading()"
+        [error]="error()"
+        (queryChange)="onQueryChange($event)"
+        (refresh)="refresh()"
+        (create)="onCreate()"
+        (actionClick)="onAction($event)"
+    />
+
+    <app-form-dialog
+        [(visible)]="dialogVisible"
+        [title]="dialogTitle()"
+        [loading]="saving()"
+        [saveDisabled]="saving()"
+        saveLabel="Guardar"
+        (save)="saveProductBatch()"
+    >
+        @if (loadingProducts()) {
+            <p class="text-muted">Cargando productos...</p>
+        }
+
+        @if (productsError()) {
+            <div class="parent-error">
+                <p>No fue posible cargar de los productos.</p>
+
+                <p-button
+                    label="Reintentar"
+                    icon="pi pi-refresh"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="loadingProducts()"
+                />
+            </div>
+        }
+        <app-product-batches-form
+            [productBatches]="selectedProductBatch()"
+            [productItems]="productItems()"
+        />
+    </app-form-dialog>
+</section>

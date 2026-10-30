@@ -160,6 +160,7 @@ export class ProductLines {
     constructor() {
         this.loadproductLines();
         this.setupCategoryItemsLoader();
+        this.loadCategoriesItems();
     }
 
     loadproductLines(query?: PaginationParams): void {
