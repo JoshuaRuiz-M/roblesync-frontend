@@ -1,0 +1,353 @@
+<div class="dashboard-page">
+    <div class="dashboard-header">
+        <div>
+            <h1>Dashboard ejecutivo</h1>
+            <p>Resumen general de operaciones de RobleSync.</p>
+        </div>
+
+        <p-button
+            label="Actualizar"
+            icon="pi pi-refresh"
+            severity="secondary"
+            [outlined]="true"
+            [loading]="loading()"
+            (onClick)="loadDashboard()"
+        />
+    </div>
+
+    <p-card styleClass="filters-card">
+        <form [formGroup]="form" (ngSubmit)="loadDashboard()">
+            <div class="filters-grid">
+                <div class="filter-field">
+                    <label for="start_date">Fecha inicial</label>
+                    <p-datepicker
+                        inputId="start_date"
+                        formControlName="start_date"
+                        dateFormat="dd/mm/yy"
+                        [showIcon]="true"
+                        [showClear]="true"
+                        [fluid]="true"
+                        appendTo="body"
+                        placeholder="Seleccionar fecha"
+                    />
+                </div>
+
+                <div class="filter-field">
+                    <label for="end_date">Fecha final</label>
+                    <p-datepicker
+                        inputId="end_date"
+                        formControlName="end_date"
+                        dateFormat="dd/mm/yy"
+                        [showIcon]="true"
+                        [showClear]="true"
+                        [fluid]="true"
+                        appendTo="body"
+                        placeholder="Seleccionar fecha"
+                    />
+                </div>
+
+                <div class="filter-actions">
+                    <p-button
+                        label="Aplicar"
+                        icon="pi pi-filter"
+                        type="submit"
+                        [loading]="loading()"
+                    />
+
+                    <p-button
+                        label="Limpiar"
+                        icon="pi pi-times"
+                        severity="secondary"
+                        [outlined]="true"
+                        [disabled]="loading()"
+                        (onClick)="clearFilters()"
+                    />
+                </div>
+            </div>
+        </form>
+    </p-card>
+
+    @if (error(); as message) {
+        <div class="error-message">
+            <i class="pi pi-exclamation-triangle"></i>
+            <span>{{ message }}</span>
+        </div>
+    }
+
+    @if (loading() && !hasData()) {
+        <div class="loading-container">
+            <p-progressSpinner />
+            <span>Cargando indicadores...</span>
+        </div>
+    }
+
+    @if (!loading() || hasData()) {
+        <div class="kpi-grid">
+            <p-card>
+                <div class="kpi-content">
+                    <div class="kpi-icon sales">
+                        <i class="pi pi-chart-line"></i>
+                    </div>
+
+                    <span class="kpi-label">Ventas facturadas</span>
+
+                    @if (overview(); as data) {
+                        <strong>
+                            {{ formatCurrency(data.sales_total) }}
+                        </strong>
+                    } @else {
+                        <strong>—</strong>
+                    }
+
+                    <small>Facturas emitidas</small>
+                </div>
+            </p-card>
+
+            <p-card>
+                <div class="kpi-content">
+                    <div class="kpi-icon purchases">
+                        <i class="pi pi-shopping-cart"></i>
+                    </div>
+
+                    <span class="kpi-label">Órdenes de compra</span>
+
+                    @if (overview(); as data) {
+                        <strong>
+                            {{ formatCurrency(data.purchases_total) }}
+                        </strong>
+                    } @else {
+                        <strong>—</strong>
+                    }
+
+                    <small>Órdenes aprobadas o recibidas</small>
+                </div>
+            </p-card>
+
+            <p-card>
+                <div class="kpi-content">
+                    <div class="kpi-icon customers">
+                        <i class="pi pi-users"></i>
+                    </div>
+
+                    <span class="kpi-label">Clientes activos</span>
+
+                    @if (overview(); as data) {
+                        <strong>
+                            {{ formatNumber(data.active_customers) }}
+                        </strong>
+                    } @else {
+                        <strong>—</strong>
+                    }
+
+                    <small>Clientes registrados actualmente</small>
+                </div>
+            </p-card>
+
+            <p-card>
+                <div class="kpi-content">
+                    <div class="kpi-icon inventory">
+                        <i class="pi pi-box"></i>
+                    </div>
+
+                    <span class="kpi-label">Productos bajo stock</span>
+
+                    @if (overview(); as data) {
+                        <strong>
+                            {{ formatNumber(data.low_stock_products) }}
+                        </strong>
+                    } @else {
+                        <strong>—</strong>
+                    }
+
+                    <small>Según punto de reorden</small>
+                </div>
+            </p-card>
+        </div>
+
+        @if (getSectionError('overview'); as message) {
+            <div class="error-message">
+                <i class="pi pi-exclamation-triangle"></i>
+                <span>{{ message }}</span>
+            </div>
+        }
+
+        <div class="charts-grid">
+            <p-card styleClass="chart-card">
+                <ng-template #title> Evolución de ventas </ng-template>
+
+                <ng-template #subtitle> Total facturado por mes </ng-template>
+
+                @if (getSectionError('salesTrend'); as message) {
+                    <div class="empty-state">
+                        {{ message }}
+                    </div>
+                } @else if (salesTrend().length > 0) {
+                    <div class="chart-container">
+                        <p-chart
+                            type="line"
+                            [data]="salesChartData()"
+                            [options]="lineChartOptions"
+                            height="320px"
+                        />
+                    </div>
+                } @else {
+                    <div class="empty-state">No hay datos de ventas disponibles.</div>
+                }
+            </p-card>
+
+            <p-card styleClass="chart-card">
+                <ng-template #title> Ventas por categoría </ng-template>
+
+                <ng-template #subtitle> Distribución de ingresos </ng-template>
+
+                @if (getSectionError('salesByCategory'); as message) {
+                    <div class="empty-state">
+                        {{ message }}
+                    </div>
+                } @else if (salesByCategory().length > 0) {
+                    <div class="chart-container">
+                        <p-chart
+                            type="doughnut"
+                            [data]="categoryChartData()"
+                            [options]="doughnutChartOptions"
+                            height="320px"
+                        />
+                    </div>
+                } @else {
+                    <div class="empty-state">No hay ventas por categoría disponibles.</div>
+                }
+            </p-card>
+        </div>
+
+        <div class="details-grid">
+            <p-card>
+                <ng-template #title> Productos más vendidos </ng-template>
+
+                <ng-template #subtitle> Ranking por ingresos facturados </ng-template>
+
+                @if (getSectionError('topProducts'); as message) {
+                    <div class="empty-state">
+                        {{ message }}
+                    </div>
+                } @else {
+                    <p-table
+                        [value]="topProducts()"
+                        [tableStyle]="{ 'min-width': '32rem' }"
+                        [scrollable]="true"
+                    >
+                        <ng-template #header>
+                            <tr>
+                                <th>Producto</th>
+                                <th class="text-right">Cantidad</th>
+                                <th class="text-right">Ventas</th>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template #body let-product>
+                            <tr>
+                                <td>
+                                    <div class="product-info">
+                                        <strong>
+                                            {{ product.product_name }}
+                                        </strong>
+                                        <small>{{ product.sku }}</small>
+                                    </div>
+                                </td>
+
+                                <td class="text-right">
+                                    {{ formatNumber(product.quantity_sold) }}
+                                </td>
+
+                                <td class="text-right">
+                                    {{ formatCurrency(product.total_sales) }}
+                                </td>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template #emptymessage>
+                            <tr>
+                                <td colspan="3" class="empty-table">
+                                    No hay productos vendidos en el período.
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                }
+            </p-card>
+
+            <p-card>
+                <ng-template #title>
+                    <div class="inventory-header">
+                        <span>Alertas de inventario</span>
+
+                        @if (highPriorityAlerts() > 0) {
+                            <p-tag
+                                [value]="highPriorityAlerts() + ' prioritarias'"
+                                severity="danger"
+                            />
+                        }
+                    </div>
+                </ng-template>
+
+                <ng-template #subtitle> Existencias y vencimientos </ng-template>
+
+                @if (getSectionError('inventoryAlerts'); as message) {
+                    <div class="empty-state">
+                        {{ message }}
+                    </div>
+                } @else {
+                    <p-table
+                        [value]="inventoryAlerts()"
+                        [rows]="5"
+                        [paginator]="inventoryAlerts().length > 5"
+                        [tableStyle]="{ 'min-width': '34rem' }"
+                        [scrollable]="true"
+                    >
+                        <ng-template #header>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Alerta</th>
+                                <th class="text-right">Disponible</th>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template #body let-alert>
+                            <tr>
+                                <td>
+                                    <div class="product-info">
+                                        <strong>
+                                            {{ alert.product_name }}
+                                        </strong>
+
+                                        <small>
+                                            {{ alert.batch_number || alert.sku }}
+                                        </small>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <p-tag
+                                        [value]="getAlertLabel(alert.alert_type)"
+                                        [severity]="getAlertSeverity(alert.priority)"
+                                    />
+                                </td>
+
+                                <td class="text-right">
+                                    {{ formatNumber(alert.available_quantity) }}
+                                </td>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template #emptymessage>
+                            <tr>
+                                <td colspan="3" class="empty-table">
+                                    No se encontraron alertas de inventario.
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                }
+            </p-card>
+        </div>
+    }
+</div>

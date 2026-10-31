@@ -1,0 +1,238 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.dashboard-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    min-width: 0;
+}
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--p-text-color);
+    }
+
+    p {
+        margin: 0.4rem 0 0;
+        color: var(--p-text-muted-color);
+    }
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+    align-items: end;
+    gap: 1rem;
+}
+
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+
+    label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--p-text-color);
+    }
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.kpi-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    min-width: 0;
+
+    .kpi-label {
+        font-size: 0.875rem;
+        color: var(--p-text-muted-color);
+    }
+
+    strong {
+        font-size: clamp(1.3rem, 2vw, 1.8rem);
+        font-weight: 700;
+        overflow-wrap: anywhere;
+        color: var(--p-text-color);
+    }
+
+    small {
+        color: var(--p-text-muted-color);
+    }
+}
+
+.kpi-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    font-size: 1.25rem;
+
+    &.sales {
+        background: rgba(59, 130, 246, 0.12);
+        color: #3b82f6;
+    }
+
+    &.purchases {
+        background: rgba(139, 92, 246, 0.12);
+        color: #8b5cf6;
+    }
+
+    &.customers {
+        background: rgba(16, 185, 129, 0.12);
+        color: #10b981;
+    }
+
+    &.inventory {
+        background: rgba(245, 158, 11, 0.12);
+        color: #f59e0b;
+    }
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.charts-grid > *,
+.details-grid > *,
+.kpi-grid > * {
+    min-width: 0;
+}
+
+.chart-container {
+    width: 100%;
+    height: 320px;
+    min-width: 0;
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    strong {
+        font-weight: 600;
+    }
+
+    small {
+        color: var(--p-text-muted-color);
+    }
+}
+
+.text-right {
+    text-align: right;
+}
+
+.empty-table,
+.empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: var(--p-text-muted-color);
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 4rem 1rem;
+    color: var(--p-text-muted-color);
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    color: var(--p-red-600);
+    background: var(--p-red-50);
+}
+
+@media (max-width: 1200px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .charts-grid,
+    .details-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-page {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .dashboard-header {
+        align-items: flex-start;
+
+        h1 {
+            font-size: 1.4rem;
+        }
+    }
+
+    .filters-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .filter-actions {
+        width: 100%;
+
+        p-button {
+            flex: 1;
+        }
+    }
+}
+
+.inventory-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+@media (max-width: 480px) {
+    .kpi-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

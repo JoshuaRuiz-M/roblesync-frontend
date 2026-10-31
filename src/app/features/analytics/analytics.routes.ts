@@ -10,4 +10,9 @@ export const ANALYTICS_ROUTES: Routes = [
         path: 'kardex',
         loadComponent: () => import('./pages/kardex/kardex').then((m) => m.Kardex),
     },
+
+    {
+        path: 'dashboard',
+        loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
+    },
 ];
