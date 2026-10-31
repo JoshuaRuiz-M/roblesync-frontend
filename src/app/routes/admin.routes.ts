@@ -189,6 +189,14 @@ export const ADMIN_ROUTES: Routes = [
                     ),
             },
             {
+                path: 'analytics',
+                canActivate: [menuGuard],
+                loadChildren: () =>
+                    import('../features/analytics/analytics.routes').then(
+                        (m) => m.ANALYTICS_ROUTES,
+                    ),
+            },
+            {
                 path: 'forbidden',
                 title: 'Acceso denegado',
                 loadComponent: () =>

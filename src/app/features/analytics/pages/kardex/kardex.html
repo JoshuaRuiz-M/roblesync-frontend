@@ -1,0 +1,250 @@
+<div class="kardex-page">
+    <div class="page-header">
+        <div>
+            <h1>Kardex de inventario</h1>
+            <p>Consulta el historial de movimientos, existencias y costos.</p>
+        </div>
+    </div>
+
+    <p-card>
+        <form [formGroup]="form" (ngSubmit)="search()">
+            <div class="filters-grid">
+                <div class="field">
+                    <label for="product">Producto</label>
+                    <p-select
+                        inputId="product"
+                        formControlName="product_id"
+                        [options]="products()"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Todos los productos"
+                        [filter]="true"
+                        [showClear]="true"
+                        [loading]="loadingCatalogs()"
+                        appendTo="body"
+                        class="w-full"
+                    />
+                </div>
+
+                <div class="field">
+                    <label for="warehouse">Bodega</label>
+                    <p-select
+                        inputId="warehouse"
+                        formControlName="warehouse_id"
+                        [options]="warehouses()"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Todas las bodegas"
+                        [filter]="true"
+                        [showClear]="true"
+                        appendTo="body"
+                        class="w-full"
+                    />
+                </div>
+
+                <div class="field">
+                    <label for="batch">Lote</label>
+                    <p-select
+                        inputId="batch"
+                        formControlName="batch_id"
+                        [options]="batches()"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Todos los lotes"
+                        [filter]="true"
+                        [showClear]="true"
+                        appendTo="body"
+                        class="w-full"
+                    />
+                </div>
+
+                <div class="field">
+                    <label for="movement">Tipo de movimiento</label>
+                    <p-select
+                        inputId="movement"
+                        formControlName="movement_type"
+                        [options]="movementTypes"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Todos los movimientos"
+                        [showClear]="true"
+                        appendTo="body"
+                        class="w-full"
+                    />
+                </div>
+
+                <div class="field">
+                    <label for="start">Fecha inicial</label>
+                    <p-datepicker
+                        inputId="start"
+                        formControlName="start_date"
+                        dateFormat="dd/mm/yy"
+                        [showIcon]="true"
+                        [showClear]="true"
+                        appendTo="body"
+                        class="w-full"
+                    />
+                </div>
+
+                <div class="field">
+                    <label for="end">Fecha final</label>
+                    <p-datepicker
+                        inputId="end"
+                        formControlName="end_date"
+                        dateFormat="dd/mm/yy"
+                        [showIcon]="true"
+                        [showClear]="true"
+                        appendTo="body"
+                        class="w-full"
+                    />
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <p-button
+                    label="Limpiar"
+                    icon="pi pi-filter-slash"
+                    severity="secondary"
+                    [outlined]="true"
+                    type="button"
+                    (onClick)="clearFilters()"
+                />
+
+                <p-button
+                    label="Consultar"
+                    icon="pi pi-search"
+                    type="submit"
+                    [loading]="loading()"
+                />
+            </div>
+        </form>
+    </p-card>
+
+    @if (error()) {
+        <div class="error-message" role="alert">
+            <i class="pi pi-exclamation-triangle"></i>
+            {{ error() }}
+        </div>
+    }
+
+    @if (summary(); as data) {
+        <div class="summary-grid">
+            <p-card>
+                <span class="summary-label">Saldo inicial</span>
+                <strong>{{ data.opening_quantity | number: '1.0-3' }}</strong>
+                <small>Q {{ data.opening_value | number: '1.2-2' }}</small>
+            </p-card>
+
+            <p-card>
+                <span class="summary-label">Entradas</span>
+                <strong>{{ data.incoming_quantity | number: '1.0-3' }}</strong>
+                <small>Q {{ data.incoming_value | number: '1.2-2' }}</small>
+            </p-card>
+
+            <p-card>
+                <span class="summary-label">Salidas</span>
+                <strong>{{ data.outgoing_quantity | number: '1.0-3' }}</strong>
+                <small>Q {{ data.outgoing_value | number: '1.2-2' }}</small>
+            </p-card>
+
+            <p-card>
+                <span class="summary-label">Saldo final</span>
+                <strong>{{ data.closing_quantity | number: '1.0-3' }}</strong>
+                <small>Q {{ data.closing_value | number: '1.2-2' }}</small>
+            </p-card>
+        </div>
+    }
+
+    <p-card>
+        <div class="table-header">
+            <div>
+                <h2>Historial de movimientos</h2>
+                <p>{{ totalRecords() }} movimientos encontrados</p>
+            </div>
+        </div>
+
+        <p-table
+            [value]="movements()"
+            [lazy]="true"
+            [lazyLoadOnInit]="false"
+            [paginator]="true"
+            [first]="(page - 1) * limit"
+            [rows]="limit"
+            [totalRecords]="totalRecords()"
+            [rowsPerPageOptions]="[10, 25, 50]"
+            [loading]="loading()"
+            [scrollable]="true"
+            scrollHeight="500px"
+            [tableStyle]="{ 'min-width': '85rem' }"
+            (onLazyLoad)="loadMovements($event)"
+        >
+            <ng-template #header>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Producto</th>
+                    <th>Bodega</th>
+                    <th>Movimiento</th>
+                    <th>Lote</th>
+                    <th>Entrada</th>
+                    <th>Salida</th>
+                    <th>Costo unit.</th>
+                    <th>Valor mov.</th>
+                    <th>Saldo</th>
+                    <th>Valor saldo</th>
+                </tr>
+            </ng-template>
+
+            <ng-template #body let-movement>
+                <tr>
+                    <td>
+                        {{ movement.movement_date | date: 'dd/MM/yyyy HH:mm' : 'UTC' }}
+                    </td>
+
+                    <td>{{ movement.product_name }}</td>
+                    <td>{{ movement.warehouse_name }}</td>
+
+                    <td>
+                        <p-tag
+                            [value]="movementLabel(movement.movement_type)"
+                            [severity]="movement.quantity > 0 ? 'success' : 'warn'"
+                        />
+                    </td>
+
+                    <td>{{ movement.batch_number ?? '—' }}</td>
+
+                    <td class="numeric">
+                        {{ movement.quantity > 0 ? (movement.quantity | number: '1.0-3') : '—' }}
+                    </td>
+
+                    <td class="numeric">
+                        {{ movement.quantity < 0 ? (-movement.quantity | number: '1.0-3') : '—' }}
+                    </td>
+
+                    <td class="numeric">
+                        {{ movement.unit_cost | number: '1.2-4' }}
+                    </td>
+
+                    <td class="numeric">
+                        {{ movement.total_cost | number: '1.2-4' }}
+                    </td>
+
+                    <td class="numeric">
+                        {{ movement.balance_quantity | number: '1.0-3' }}
+                    </td>
+
+                    <td class="numeric">
+                        {{ movement.balance_value | number: '1.2-4' }}
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template #emptymessage>
+                <tr>
+                    <td colspan="11" class="empty-message">
+                        No se encontraron movimientos de inventario.
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>
